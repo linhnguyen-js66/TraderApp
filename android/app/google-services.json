@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "38673800151",
+    "project_id": "trader-c32be",
+    "storage_bucket": "trader-c32be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:38673800151:android:aee076ceca4bd9198b4992",
+        "android_client_info": {
+          "package_name": "com.trader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "38673800151-md76phfus75a0kdkto2fiej9in443ah8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFGfhzg5SnipWXpFsA-bjtxPdVSKpzsbc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "38673800151-md76phfus75a0kdkto2fiej9in443ah8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

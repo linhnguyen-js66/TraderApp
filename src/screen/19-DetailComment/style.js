@@ -1,0 +1,93 @@
+import {StyleSheet} from 'react-native'
+import { palette, fontSize } from '../../theme'
+export default StyleSheet.create({
+    containHead:{
+        backgroundColor:palette.white,
+        marginTop:8,
+        flexDirection:'row',
+        borderBottomWidth:0.5
+    },
+    containTextView:{
+        flex:1,
+        alignItems:'center',
+        marginTop:8,
+        fontSize:fontSize[4],
+        fontWeight:'bold',
+        textAlign:'center',
+        paddingBottom:16
+    },
+    contain:{
+        flex:1,
+        flexDirection:'row',
+        marginBottom:16
+    },
+    avatar:{
+        width:45,
+        height:45,
+        borderRadius:30
+    },
+    comment:{
+        backgroundColor:palette.colorgray,
+        borderRadius:20
+    },
+    containComment:{
+       flex:1,
+       marginLeft:8,
+       justifyContent:'center'
+    },
+    textComment:{
+        paddingHorizontal:16,
+        paddingVertical:4
+    },
+    containRepComment:{
+        flexDirection:'row',
+        marginTop:8,
+        marginLeft:16
+    },
+    time:{
+        color:palette.grey,
+        marginRight:16
+    },
+    rep:{
+        color:palette.grey
+    },
+    name:{
+        marginLeft:16,
+        fontSize:fontSize[3],
+        fontWeight:'bold',
+        marginTop:4
+    },
+    contain2:{
+        flex:1,
+        flexDirection:'row',
+        marginLeft:32,
+        marginTop:8
+    },
+    avatar2:{
+        width:30,
+        height:30,
+        borderRadius:30
+    },
+    containSend:{
+        marginRight:16,
+        justifyContent:'center'
+    },
+    send:{
+        fontSize:fontSize[4],
+        fontWeight:'bold',
+        color:"#008ae6"
+    },
+    footer:{
+        alignSelf: 'flex-end',
+        position: 'absolute',
+        left: 0,
+        bottom:0,
+        width:'100%',
+        
+        backgroundColor:'white',
+        
+        borderTopWidth:0.2,
+        borderTopColor:palette.grey,
+        paddingBottom:16
+    }
+})

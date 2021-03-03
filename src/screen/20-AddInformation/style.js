@@ -1,0 +1,81 @@
+import {StyleSheet} from 'react-native'
+import { palette, fontSize } from '../../theme'
+export default StyleSheet.create({
+   addava:{
+       height:80,
+       width:80,
+       alignSelf:'center',
+       borderRadius:50,
+       position:'absolute',
+       marginTop:30 
+    },
+    containPlus:{
+      marginLeft:40,
+      marginTop:85,
+      backgroundColor:"#ff8000",
+      height:25,
+      width:25,
+      alignSelf:'center',
+      borderRadius:30
+    },
+    iconplus:{
+      paddingVertical:4,
+    },
+    containAva:{
+        height:150
+    },
+    imgCompany:{
+        resizeMode:'contain',
+        width:undefined,
+        height:120,
+    },
+    containChooseType:{
+        flexDirection:"row",
+        marginTop:32,
+        marginHorizontal:32
+    },
+    imgPrivate:{
+        resizeMode:'contain',
+        height:120,
+        width:undefined
+    },
+    type:{
+        alignSelf:'center',
+        marginTop:16,
+        fontSize:fontSize[0],
+        color:'#737373',
+        fontWeight:'bold'
+    },
+    containInput:{
+        marginHorizontal:32
+    },
+    iconCheck:{
+        position:'absolute',
+        flex:1,
+        alignSelf:'center',
+        marginTop:32
+    },
+    buttonFooter:{
+        alignSelf: 'flex-end',
+        position: 'absolute',
+        left: 0,
+        bottom:0,
+        flex:1,
+        width:'100%',
+        paddingHorizontal:32,
+        backgroundColor:'white',
+        paddingVertical:32
+    },
+    containerSwitch:{
+        flexDirection:'row',
+        marginHorizontal:32,
+        marginTop:32
+    },
+    buttonSwitch:{
+        flex:1
+    },
+    titleSwitch:{
+        fontWeight:'bold',
+        fontSize:fontSize[4]
+    }
+})
