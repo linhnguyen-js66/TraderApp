@@ -88,8 +88,8 @@ const NewsScreen = () => {
         let ngay = d.getDate()
         let thang = d.getMonth() + 1
         let nam = d.getFullYear();
-        let today = `${nam}-${thang}-${ngay}`
-        let snapshot = await firestore().collection("DataNews").orderBy('Dating').startAfter(today).limit(4).get()
+        let today = `${nam}/${thang}/${ngay}`
+        let snapshot = await firestore().collection("DataNews").orderBy('id').get()
         snapshot.docs.map(item => resultData.push(item.data()))
         setDataNewsHorizontal(resultData)
         console.log(dataNewsHorizontal.length)

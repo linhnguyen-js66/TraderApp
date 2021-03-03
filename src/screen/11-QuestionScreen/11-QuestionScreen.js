@@ -10,39 +10,22 @@ import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
 import { palette } from '../../theme'
 
-
-let Datatheme = [
-    {
-        id: 1,
-        title: "Kiến thức cơ bản",
-        image: require('../../image/kienthuc.png')
-    },
-    {
-        id: 2,
-        title: "Luật kinh tế",
-        image: require('../../image/luat.png')
-    },
-    {
-        id: 3,
-        title: "Marketing",
-        image: require('../../image/quangcao.png')
-    }
-]
-const ListTheme = ({ data, onPress}) => {
-    const { id, image, title } = data
+const ListTheme = ({ data, onPress }) => {
+    const { id, image, name } = data
     return (
-        <View style={{ flex: 1 }} key={id}>
+        <View style={{ flex: 1 }} >
             <TouchableOpacity style={styles.containTheme}
                 onPress={onPress}
+                key={id}
             >
-                <Image source={image} style={styles.imageIcon} />
+                <Image source={{ uri: image }} style={styles.imageIcon} />
             </TouchableOpacity>
-            <Text style={styles.texttheme}>{title}</Text>
+            <Text style={styles.texttheme}>{name}</Text>
         </View>
     )
 }
-const ListPost = ({ item,onClick, user, Comment, SavePost, snapshot }) => {
-    const { createdAt, image, idUser, status, id, idPost, idUserLike, like } = item
+const ListPost = ({ item, onClick, user, Comment, SavePost, snapshot, datatheme }) => {
+    const { createdAt, image, idUser, status, id, idPost, idUserLike, like,theme } = item
 
     const [isLike, setIsLike] = useState(like)
 
@@ -52,7 +35,7 @@ const ListPost = ({ item,onClick, user, Comment, SavePost, snapshot }) => {
     let uid = auth().currentUser.uid
     let check = false
 
-    
+
     const addLikes = (idPost, uid) => {
         let resultData = []
         resultData = amountLike
@@ -67,7 +50,7 @@ const ListPost = ({ item,onClick, user, Comment, SavePost, snapshot }) => {
         }
         )
         setAmountLike(resultData)
-       
+
     }
 
     const disLikes = (idPost, uid) => {
@@ -80,21 +63,28 @@ const ListPost = ({ item,onClick, user, Comment, SavePost, snapshot }) => {
             }
         })
         setAmountLike(resultData)
-        
+
     }
-   
+    const [DataComment, setDataComment] = useState([])
+    const getDataComment = async () => {
+        let result = []
+        let snapshot = await firestore().collection("DataComment").get()
+        result = snapshot.docs.filter(item => item.data().idPost == idPost)
+        setDataComment(result)
+    }
     useEffect(() => {
-       setIsLike(like ? true : false)    
+        setIsLike(like ? true : false)
+        getDataComment()
     }, [])
     const onClickLike = () => {
         setIsLike(true)
-        addLikes(idPost,uid)
-        uploadLikeFirebase(uid,id)
+        addLikes(idPost, uid)
+        uploadLikeFirebase(uid, id)
     }
     const onClickDisLike = () => {
         setIsLike(false)
-        disLikes(idPost,uid)
-        deleteLikeFirebase(uid,id)
+        disLikes(idPost, uid)
+        deleteLikeFirebase(uid, id)
     }
     const uploadLikeFirebase = async (uid, id) => {
         try {
@@ -133,7 +123,17 @@ const ListPost = ({ item,onClick, user, Comment, SavePost, snapshot }) => {
                             </View>
                             <View style={styles.containUserName}>
                                 <Text style={styles.userName}>{item.name}</Text>
-                                <Text style={styles.date}>{createdAt.split("/").reverse().join("/")}</Text>
+                                <View style={{flexDirection:'row',flex:1}}>
+                                    <Text style={styles.date}>{createdAt.split("/").reverse().join("/")}</Text>
+                                    {theme !== "" && datatheme.map(data=>{
+                                        if(data.id == theme){
+                                            return <View style={styles.containtexttheme}>
+                                                <Text style={styles.theme} key={data.id}>#{data.name}</Text>
+                                            </View>
+                                        }
+                                    })}
+                                </View>
+
                             </View>
                         </View>
                     }
@@ -156,15 +156,15 @@ const ListPost = ({ item,onClick, user, Comment, SavePost, snapshot }) => {
             {/**Nút like bình luận*/}
             <View style={styles.containLikeandComment}>
                 <View>
-                            <LikeAndComment name={isLike ? "heart" : "hearto"} type="antdesign"
-                            onPress={() => {
-                               
-                                isLike ? onClickDisLike() : onClickLike()
-                            }
-                                 
-                            }
-                            color={isLike ? "tomato" : "black"}
-                        />
+                    <LikeAndComment name={isLike ? "heart" : "hearto"} type="antdesign"
+                        onPress={() => {
+
+                            isLike ? onClickDisLike() : onClickLike()
+                        }
+
+                        }
+                        color={isLike ? "tomato" : "black"}
+                    />
                 </View>
                 <View style={{ marginLeft: 16 }}>
                     <LikeAndComment name="chatbubble-outline"
@@ -192,13 +192,15 @@ const ListPost = ({ item,onClick, user, Comment, SavePost, snapshot }) => {
 
                 {/* {amountLike.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} */}
                 <TouchableOpacity onPress={onClick}>
-                    <Text style={styles.comment}>Xem tất cả 20 bình luận</Text>
+                    <Text style={styles.comment}>Xem tất cả {DataComment.length} bình luận</Text>
                 </TouchableOpacity>
             </View>
         </View>
     )
 }
-const Header = ({ onPress, onClick }) => {
+const Header = ({ onPress, onClick, DataTheme }) => {
+    const navigation = useNavigation()
+
     return (
         <View>
             <View style={styles.containHeader}>
@@ -222,9 +224,11 @@ const Header = ({ onPress, onClick }) => {
             {/**Theme*/}
             <View style={{ marginTop: 16, marginHorizontal: 8 }}>
                 <FlatList
-                    data={Datatheme}
+                    data={DataTheme}
                     keyExtractor={item => item.id}
-                    renderItem={({ item, index }) => <ListTheme data={item} onPress={onClick} />}
+                    renderItem={({ item, index }) => <ListTheme data={item} onPress={() => navigation.navigate(screen.ThemeScreen, {
+                        idTheme: item.id
+                    })} />}
                     numColumns={3}
                 />
             </View>
@@ -245,16 +249,16 @@ const QuestionScreen11 = () => {
         let snapshot = await firestore().collection("DataStatus").orderBy('idPost').limit(3).get()
         if (!snapshot.empty) {
             let listPost = []
-     
+
             setLastDoc(snapshot.docs[snapshot.docs.length - 1])
             await firestore().collection("DataStatus").orderBy('idPost').limit(3).get().then(querySnapshot => {
                 querySnapshot.forEach(doc => {
-                    listPost.push({ id: doc.id, ...doc.data(), like:false })
+                    listPost.push({ id: doc.id, ...doc.data(), like: false })
                     let resultData = listPost
-                    for(let data = 0; data < resultData.length; data++){
+                    for (let data = 0; data < resultData.length; data++) {
                         let amountUser = resultData[data].idUserLike
-                        for(let user = 0; user < amountUser.length; user++){
-                            if(amountUser[user].uid == uid){
+                        for (let user = 0; user < amountUser.length; user++) {
+                            if (amountUser[user].uid == uid) {
                                 resultData[data].like = true
                             }
                         }
@@ -277,16 +281,16 @@ const QuestionScreen11 = () => {
                 let snapshot = await firestore().collection("DataStatus").orderBy('idPost').limit(3).startAfter(lastDoc.data().idPost).get()
                 if (!snapshot.empty) {
                     let listPost = DataPost
-                
+
                     setLastDoc(snapshot.docs[snapshot.docs.length - 1])
                     await firestore().collection("DataStatus").orderBy('idPost').limit(3).startAfter(lastDoc.data().idPost).get().then(querySnapshot => {
                         querySnapshot.forEach(doc => {
-                            listPost.push({ id: doc.id, ...doc.data(), like:false })
+                            listPost.push({ id: doc.id, ...doc.data(), like: false })
                             let resultData = listPost
-                            for(let data = 0; data < resultData.length; data++){
+                            for (let data = 0; data < resultData.length; data++) {
                                 let amountUser = resultData[data].idUserLike
-                                for(let user = 0; user < amountUser.length; user++){
-                                    if(amountUser[user].uid == uid){
+                                for (let user = 0; user < amountUser.length; user++) {
+                                    if (amountUser[user].uid == uid) {
                                         resultData[data].like = true
                                     }
                                 }
@@ -323,7 +327,7 @@ const QuestionScreen11 = () => {
         )
     }
     //GetDataUser from firebase 
-    
+
     const [DataUser, setDataUser] = useState([])
     const getDataUserInfomation = async () => {
         let resultData = []
@@ -334,20 +338,28 @@ const QuestionScreen11 = () => {
     useEffect(() => {
         getDataPost()
         getDataUserInfomation()
-    
+        getDataTheme()
     }, [])
     //id User
-    
+
     let uid = auth().currentUser.uid
     //sort
     function byDate(a, b) {
         //by month and then by day
         let d1 = new Date(a.createdAt); // 1993-02-15T00:00:00Z =>   1993-02-14T20:00:00EST
         let d2 = new Date(b.createdAt);
-      
-        return d2-d1
-        
-      }
+
+        return d2 - d1
+
+    }
+    //Datatheme
+    const [DataTheme, setDataTheme] = useState([])
+    const getDataTheme = async () => {
+        let result = []
+        let snapshot = await firestore().collection('Fields').get()
+        snapshot.docs.map(item => result.push(item.data()))
+        setDataTheme(result)
+    }
     return (
         <View style={{ flex: 1, backgroundColor: palette.white }} >
             {/**Header*/}
@@ -361,18 +373,21 @@ const QuestionScreen11 = () => {
                 <FlatList
                     data={DataPost.sort(byDate)}
                     keyExtractor={item => item.id}
-                    renderItem={({ item, index }) => <ListPost item={item} 
-                    onClick={() =>  navigation.navigate(screen.DetailComment, {
-                        idPost: item.idPost
-                      })}
-                        
+                    renderItem={({ item, index }) => <ListPost item={item}
+                        onClick={() => navigation.navigate(screen.DetailComment, {
+                            idPost: item.idPost
+                        })}
+
                         user={DataUser}
                         snapshot={DataPost}
+                        datatheme={DataTheme}
                     />}
-                  
+
                     ListHeaderComponent={() => <Header
-                        onPress={() => navigation.navigate(screen.StatusScreen)}
-                        onClick={() => navigation.navigate(screen.ThemeScreen)}
+                        onPress={() => navigation.navigate(screen.StatusScreen,{
+                            idType:""
+                        })}
+                        DataTheme={DataTheme}
                     />}
                     onEndReachedThreshold={1}
 
@@ -389,7 +404,7 @@ const QuestionScreen11 = () => {
                             }}
                         />
                     }
-                    onMomentumScrollBegin={() =>  onEndReachedCalledDuringMomentum = false }
+                    onMomentumScrollBegin={() => onEndReachedCalledDuringMomentum = false}
                     ListFooterComponent={renderFooter}
                 />
             </View>

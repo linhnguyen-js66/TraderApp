@@ -8,6 +8,7 @@ import { palette } from '../../theme'
 import firestore from '@react-native-firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
 import { screen } from '../../navigation/screen'
+import auth from '@react-native-firebase/auth'
 const Choose = [
     {
         id: 1,
@@ -179,12 +180,13 @@ const MarketScreen15 = () => {
 
         setIsLoading(false);
     }
+    let uid = auth().currentUser.uid
         return (
         <View style={{ backgroundColor: 'white', flex: 1 }}>
 
             {/**Header */}
             <View style={styles.header}>
-                <HeaderCustom />
+                <HeaderCustom uid={uid}/>
                 <Score />
             </View>
             {/**Controlbar */}

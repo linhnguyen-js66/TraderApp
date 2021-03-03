@@ -4,6 +4,7 @@ import styles from './style'
 import Carousel, { Pagination } from 'react-native-snap-carousel'
 import { HeaderCustom, Score } from '../../components/HeaderCustom'
 import { useNavigation } from '@react-navigation/native'
+import auth from '@react-native-firebase/auth'
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
 // const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4)
@@ -81,6 +82,7 @@ const CarouselHorizal = ({ data, onPress }) => {
 }
 const StudyScreen = () => {
     const [activeSlide, setActiveSlide] = useState(0)
+    let uid = auth().currentUser.uid
     const pagination = () => {
         return (
             <Pagination
@@ -106,7 +108,7 @@ const StudyScreen = () => {
     return (
         <ScrollView>
             <View style={styles.header}>
-                <HeaderCustom/>
+                <HeaderCustom uid={uid}/>
                 <Score />
             </View>
             {/* Carousel */}

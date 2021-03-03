@@ -27,7 +27,7 @@ const ListComment = ({ item, onPress, onClick, dataUser }) => {
                                 <Text style={styles.textComment}>{comment}</Text>
                             </View>
                             <View style={styles.containRepComment}>
-                                <Text style={styles.time}>{createdAt}</Text>
+                                <Text style={styles.time}>{createdAt.split("/").reverse().join("/")}</Text>
                                 <TouchableOpacity onPress={onPress}>
                                     <Text style={styles.rep}>Trả lời</Text>
                                 </TouchableOpacity>
@@ -149,7 +149,7 @@ const DetailComment18 = ({ route }) => {
             idComment: makeID(),
             idPost: idPost,
             comment: comment,
-            createdAt: `${ngay}/${thang}/${nam}`,
+            createdAt: `${nam}/${thang}/${ngay}`,
             repComment: [],
             uid: uid
         }
@@ -220,9 +220,18 @@ const DetailComment18 = ({ route }) => {
             <ActivityIndicator
                 size='large'
                 color={palette.buttonColor}
-                style={{ marginBottom:120}}
+                style={{ marginBottom: 120 }}
             />
         )
+    }
+    //sort
+    function byDate(a, b) {
+        //by month and then by day
+        let d1 = new Date(a.createdAt); // 1993-02-15T00:00:00Z =>   1993-02-14T20:00:00EST
+        let d2 = new Date(b.createdAt);
+
+        return d2 - d1
+
     }
     useEffect(() => {
         getDataUserInfomation()
@@ -237,7 +246,7 @@ const DetailComment18 = ({ route }) => {
             </View>
             <View style={{ paddingHorizontal: 16, paddingTop: 16 }}>
                 <FlatList
-                    data={DataComment}
+                    data={DataComment.sort(byDate)}
                     keyExtractor={item => item.id}
                     renderItem={({ item, index }) => <ListComment item={item}
 
@@ -263,7 +272,7 @@ const DetailComment18 = ({ route }) => {
                             getMoreDataComment()
                         }
                     }}
-                    onMomentumScrollBegin={() =>  onEndReachedCalledDuringMomentum = false }
+                    onMomentumScrollBegin={() => onEndReachedCalledDuringMomentum = false}
                     ListFooterComponent={renderFooter}
                 />
 

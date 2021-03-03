@@ -4,34 +4,29 @@ import { Icon } from 'react-native-elements'
 import styles from './style'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 import { useNavigation } from '@react-navigation/native'
-import {screen} from '../../navigation/screen'
+import { screen } from '../../navigation/screen'
 import { palette } from '../../theme'
 import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
-let Datatheme = [
-    {
-        id: 1,
-        title: "Kiến thức cơ bản",
-        image: require('../../image/kienthuc.png')
-    },
-    {
-        id: 2,
-        title: "Luật kinh tế",
-        image: require('../../image/luat.png')
-    },
-    {
-        id: 3,
-        title: "Marketing",
-        image: require('../../image/quangcao.png')
-    }
-]
-const StatusScreen14 = () => {
+
+const StatusScreen14 = ({route}) => {
     const [photo, setPhoto] = useState(null)
-    const [status,setStatus] = useState("")
-    const [type,setType] = useState("")
+    const [status, setStatus] = useState("")
+    
     const navigation = useNavigation()
-  
-  
+    const {idType} = route.params
+    const [type, setType] = useState(idType)
+    //DataTheme
+    const [DataTheme, setDataTheme] = useState([])
+    const getDataTheme = async () => {
+        let result = []
+        let snapshot = await firestore().collection('Fields').get()
+        snapshot.docs.map(item => result.push(item.data()))
+        setDataTheme(result)
+    }
+    useEffect(()=>{
+        getDataTheme()
+    },[])
     const handleChoosePhoto = () => {
         const options = {
             noData: true
@@ -42,60 +37,60 @@ const StatusScreen14 = () => {
             }
         })
     }
-    function makeid () {
+    function makeid() {
         let text = "";
-  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for (let i = 0; i < 5; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text
+        for (let i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text
     }
 
-   const handleAddStatus = async () => {
-       
-       if(status == ""){
-           Alert.alert("Thông báo","Bạn có muốn tiếp tục đăng bài viết",[
-               {
-                   text:"Tiếp",
-                   onPress: () => console.log("cancel")
-               },
-               {
-                   text:"Hủy",
-                   onPress: () => navigation.navigate(screen.QuestionScreen)
-               }
-           ])
-       }
-       else{
-        try {
-            
-            let d = new Date()
-            let ngay = d.getDate()
-            let thang = d.getMonth() + 1
-            let nam = d.getFullYear();
-            let uid = auth().currentUser.uid
-            let newStatus = {
-                createdAt: `${nam}/${thang}/${ngay}`,
-                theme:type,
-                image:photo,
-                idUserLike:[],
-                idUser:uid,
-                status:status,
-                idPost:makeid()
-            }
-           await firestore().collection("DataStatus").add(newStatus)
-           
-          navigation.navigate(screen.QuestionScreen)
-        } catch (error) {
-            console.log(error)
+    const handleAddStatus = async () => {
+
+        if (status == "") {
+            Alert.alert("Thông báo", "Bạn có muốn tiếp tục đăng bài viết", [
+                {
+                    text: "Tiếp",
+                    onPress: () => console.log("cancel")
+                },
+                {
+                    text: "Hủy",
+                    onPress: () => navigation.navigate(screen.QuestionScreen)
+                }
+            ])
         }
-       }
-   }
+        else {
+            try {
+
+                let d = new Date()
+                let ngay = d.getDate()
+                let thang = d.getMonth() + 1
+                let nam = d.getFullYear();
+                let uid = auth().currentUser.uid
+                let newStatus = {
+                    createdAt: `${nam}/${thang}/${ngay}`,
+                    theme: type,
+                    image: photo,
+                    idUserLike: [],
+                    idUser: uid,
+                    status: status,
+                    idPost: makeid()
+                }
+                await firestore().collection("DataStatus").add(newStatus)
+
+                navigation.navigate(screen.QuestionScreen)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             {/**header */}
             <View style={styles.headContain}>
                 <TouchableOpacity style={styles.containTextCancel}
-                  onPress={()=>navigation.navigate(screen.QuestionScreen)}
+                    onPress={() => navigation.navigate(screen.QuestionScreen)}
                 >
                     <Text style={styles.textCancel}>Hủy</Text>
                 </TouchableOpacity>
@@ -103,9 +98,9 @@ const StatusScreen14 = () => {
                     <Image source={require('../../image/logo.png')} style={styles.imgLogo} />
                 </View>
                 <TouchableOpacity style={styles.containTextPost}
-                   onPress = {()=>{
-                      handleAddStatus()
-                   }}
+                    onPress={() => {
+                        handleAddStatus()
+                    }}
                 >
                     <Text style={styles.textPost}>Đăng</Text>
                 </TouchableOpacity>
@@ -118,7 +113,7 @@ const StatusScreen14 = () => {
                 placeholder="Đặt câu hỏi cho cộng đồng..."
                 autoFocus={true}
                 value={status}
-                onChangeText={(text)=>setStatus(text)}
+                onChangeText={(text) => setStatus(text)}
             />
 
             {/**Nút thêm ảnh, thêm link */}
@@ -162,13 +157,13 @@ const StatusScreen14 = () => {
                     <FlatList
                         horizontal
                         showsHorizontalScrollIndicator={false}
-                        data={Datatheme}
+                        data={DataTheme}
                         keyExtractor={item => item.id}
-                        renderItem={({ item, index }) => <TouchableOpacity style={[styles.themeContain,type == item.id && {backgroundColor:palette.buttonColor}]}
-                          onPress={()=>setType(item.id)}
+                        renderItem={({ item, index }) => <TouchableOpacity style={[styles.themeContain, type == item.id && { backgroundColor: palette.buttonColor }]}
+                            onPress={() => setType(item.id)}
                         >
-                            <Text key={item.id} 
-                            style={styles.textTheme}>{item.title}</Text>
+                            <Text key={item.id}
+                                style={[styles.textTheme, type == item.id && {color:'white'}]}>{item.name}</Text>
                         </TouchableOpacity>}
                     />
                 </View>

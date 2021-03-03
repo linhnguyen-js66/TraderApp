@@ -109,5 +109,11 @@ export default StyleSheet.create({
         marginTop:4,
         color:palette.grey,
         marginBottom:32
+    },
+    theme:{
+        color:palette.grey
+    },
+    containtexttheme:{
+        alignItems:'flex-end',flex:1,marginRight:16
     }
 })

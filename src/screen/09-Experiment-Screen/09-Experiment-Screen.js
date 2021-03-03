@@ -5,6 +5,7 @@ import { Score, HeaderCustom} from '../../components/HeaderCustom'
 import ButtonForm from '../../components/ButtonForm'
 import { useNavigation } from '@react-navigation/native'
 import {screen} from '../../navigation/screen'
+import auth from '@react-native-firebase/auth'
 let CategoryAdd = [
     {
        id:1,
@@ -65,10 +66,11 @@ const ListAddress = ({data,onPress}) => {
 }
 const ExperimentScreen = () => {
     const navigation = useNavigation()
+    let uid = auth().currentUser.uid
     return(
         <ScrollView>
              <View style={styles.header}>
-                <HeaderCustom />
+                <HeaderCustom uid={uid}/>
                 <Score/>
             </View>
             <Text style={styles.title}>Nguồn vốn dự toán</Text>

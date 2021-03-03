@@ -10,8 +10,7 @@ export default StyleSheet.create({
         flex:1
     },
     header:{
-        flexDirection:'row',
-        borderBottomWidth:0.4,
+        flexDirection:'row'
     },
     imageHeader:{
         resizeMode:'contain',
@@ -20,7 +19,8 @@ export default StyleSheet.create({
         marginTop:32
     },
     containHeader:{
-        backgroundColor:palette.backgroundlightGreen
+        backgroundColor:palette.backgroundlightGreen,
+        marginBottom:32
     },
     text1:{
         fontWeight:'bold',
@@ -55,7 +55,7 @@ export default StyleSheet.create({
     },
     containStatus:{
         marginVertical:8,
-        marginLeft:16
+        marginHorizontal:16
     },
     status:{
         fontSize:fontSize[3]
@@ -98,7 +98,13 @@ export default StyleSheet.create({
         borderRadius:50
     },
     listpost:{
-        marginTop:32,
-        marginBottom:32
+   
+        flex:1
+    },
+    theme:{
+        color:palette.grey
+    },
+    containtexttheme:{
+        alignItems:'flex-end',flex:1,marginRight:16
     }
 })
