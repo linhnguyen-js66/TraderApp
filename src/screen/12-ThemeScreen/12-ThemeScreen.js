@@ -382,7 +382,6 @@ const ThemeScreen12 = ({ route }) => {
                 />
             </View>
 
-
         </View>
     )
 }

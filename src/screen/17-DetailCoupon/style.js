@@ -6,7 +6,6 @@ export default StyleSheet.create({
         flex:1,
         marginTop:8,
         flexDirection:'row',
-        marginBottom:16,
         borderBottomWidth:0.5
     },
     containTextView:{
@@ -20,14 +19,14 @@ export default StyleSheet.create({
     },
     img:{
         height:850,
-        borderRadius:20,
+       
         width:'100%',
         flex:1
     },
     containImg:{
-        marginHorizontal:16,
+  
         elevation:9,
-        marginBottom:16,
+    
         flex:1
     },
     detailCoupon:{

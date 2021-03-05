@@ -1,27 +1,39 @@
 import {StyleSheet} from 'react-native'
 import { fontSize, palette } from '../../theme'
 export default StyleSheet.create({
+    ImageLogo:{
+        resizeMode:"contain",
+        width:undefined,
+        height:25,
+        marginTop:12,
+        marginBottom:16,
+        flex:1
+    },
     header:{
         flexDirection:'row',
-        paddingVertical:8,
-        paddingHorizontal:16,
-        borderBottomWidth:0.4
+        borderBottomWidth:0.4,
     },
-    imgava:{
+    imageHeader:{
         resizeMode:'contain',
         width:undefined,
-        height:120,
+        height:85,
+        marginTop:32
+    },
+    imgava:{
+        width:95,
+        height:95,
         borderRadius:200,
+        alignSelf:'center'
     },
     containava:{
-        paddingTop:32,
-        backgroundColor:palette.backgroundlightGreen
+        paddingTop:16,
+   
     },
     titleName:{
         alignSelf:'center',
-        fontSize:fontSize[6],
+        fontSize:fontSize[0],
         marginTop:16,
-        marginBottom:32,
+        marginBottom:16,
         fontWeight:'bold'
     },
     imgcoin:{
@@ -32,10 +44,9 @@ export default StyleSheet.create({
     },
     containTS:{
         flexDirection:'row',
-        backgroundColor:'tomato',  
-        flex:1,
+        backgroundColor:'tomato',
         alignSelf:'flex-end',
-        marginRight:16,
+        marginRight:32,
         borderRadius:5,
         marginTop:16
     },
@@ -43,22 +54,48 @@ export default StyleSheet.create({
         paddingHorizontal:8,
         alignSelf:'center',
         fontSize:fontSize[3],
-        fontWeight:'bold'
+        fontWeight:'bold',
+        color:'white'
     },
-    titleTK:{
-        fontSize:fontSize[4]
+    contain:{
+        marginHorizontal:32,
+        elevation:2,
+        borderRadius:10,
+        paddingBottom:20
     },
-    containTK:{
+    icon:{
+        height:30,
+        width:35,
+        
+    },
+    containInfo:{
         flexDirection:'row',
-        marginTop:16
+        marginTop:20,
+        marginHorizontal:24
     },
-    descrip:{
+    info:{
+        color:palette.grey,
+        fontWeight:'bold',
+        marginVertical:16,
+        marginLeft:32
+    },
+    infotext:{
+        color:palette.grey,
+        alignSelf:'center',
+        marginLeft:20,
+        flex:1
+    },
+    containerSwitch:{
+        flexDirection:'row',
+        marginHorizontal:32,
+        
+    },
+    buttonSwitch:{
+        flex:1
+    },
+    titleSwitch:{
+        fontWeight:'bold',
         fontSize:fontSize[4],
         color:palette.grey
-    },
-    line:{
-        borderWidth:0.4,
-        borderColor:palette.grey,
-        marginTop:16,
     }
 })

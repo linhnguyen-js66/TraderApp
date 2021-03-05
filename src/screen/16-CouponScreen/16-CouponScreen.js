@@ -4,6 +4,8 @@ import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, Dimensions }
 import { Icon } from 'react-native-elements'
 import styles from './style'
 import HeaderView from '../../components/Header'
+import { useNavigation } from '@react-navigation/native'
+import {screen} from '../../navigation/screen'
 let DataCoupon = [
     {
         id:1,
@@ -38,11 +40,11 @@ let DataCoupon = [
         img:require('../../image/vans.png')
     },
 ]
-const ListCoupon = ({item,index}) => {
+const ListCoupon = ({item,index,onPress}) => {
     return (
         <View style={[{flex:1,marginLeft:16,marginBottom:16},index % 2 == 1 && { marginRight: 16 }]}>
             <Image source={item.img} style={styles.imgCoupon} /> 
-            <TouchableOpacity style={styles.containDetail}>
+            <TouchableOpacity style={styles.containDetail} onPress={onPress}>
                 <Text style={styles.nameStore}>{item.name}</Text>
                 <Text style={styles.detail}>{item.detail}</Text>
                 <View style={styles.hansd}>
@@ -57,6 +59,7 @@ const ListCoupon = ({item,index}) => {
     )
 }
 const CouponScreen16 = () => {
+    const navigation = useNavigation()
     return (
         <View style={{ backgroundColor: 'white',flex:1}}>
              <View style={styles.header}>
@@ -70,7 +73,9 @@ const CouponScreen16 = () => {
                    <FlatList
                     data={DataCoupon}
                     keyExtractor={item => item.id}
-                    renderItem={({item,index})=><ListCoupon item={item} index={index}/>}
+                    renderItem={({item,index})=><ListCoupon item={item} index={index}
+                        onPress={()=>navigation.navigate(screen.DetailCoupon)}
+                    />}
                     numColumns={2}
                    />
                 </View>

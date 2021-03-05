@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { TextInput } from 'react-native'
-import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, Dimensions } from "react-native"
+import { TextInput, ToastAndroid } from 'react-native'
+import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, Dimensions, Switch } from "react-native"
 import { Icon } from 'react-native-elements'
 import styles from './style'
-import { HeaderCustom, Score } from '../../components/HeaderCustom'
+import HeaderView from '../../components/Header'
 import { useNavigation } from '@react-navigation/native'
 import { screen } from '../../navigation/screen'
-import { palette } from '../../theme'
+import { fontSize, palette } from '../../theme'
 import auth from '@react-native-firebase/auth'
 import firestore from "@react-native-firebase/firestore"
 let Data = [
@@ -32,37 +32,63 @@ let Data = [
     }
 ]
 const ListInfo = ({ item, data }) => {
-    const { name, id } = item
-    const {count, email, type} = data
+    const navigation = useNavigation()
     return (
         <View style={{ flex: 1 }}>
-            {name !== "Đã lưu" ?
-                <View style={{ flex: 1 }}>
-                    <View style={styles.containTK} key={id}>
-                        <Text style={styles.titleTK}>{item.name}</Text>
-                        <View style={{ alignItems: 'flex-end', flex: 1 }}>
-                            <Text style={styles.descrip}>{}</Text>
-                        </View>
+            <View style={styles.containInfo}>
+                <Image source={require('../../image/email.png')} style={styles.icon} />
+                <Text style={styles.infotext}>{item.email}</Text>
+            </View>
+            <View style={styles.containInfo}>
+                <Image source={require('../../image/setting.png')} style={styles.icon} />
+                <Text style={styles.infotext}>{item.type}</Text>
+            </View>
+            <View style={styles.containInfo}>
+                <Image source={require('../../image/point.png')} style={styles.icon} />
+                <Text style={styles.infotext}>{item.count}</Text>
+            </View>
+            <View style={styles.containInfo}>
+                <Image source={require('../../image/coupon.png')} style={styles.icon} />
+                <Text style={styles.infotext}>Mã khuyến mãi</Text>
+            </View>
+            <TouchableOpacity style={styles.containInfo}>
+                <Image source={require('../../image/save.png')} style={styles.icon} />
+                <View style={{ flexDirection: 'row', flex: 1 }}>
+                    <Text style={styles.infotext}>Đã lưu</Text>
+                    <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                        <Icon name="right" type="antdesign" size={15} color="grey" />
                     </View>
-                    <View style={styles.line}></View>
-                </View> :
-                <TouchableOpacity style={styles.containTK}>
-                    <Text style={styles.titleTK}>Đã lưu</Text>
-                    <View style={{ alignItems: 'flex-end', flex: 1 }}>
-                        <Icon name="right" type="antdesign" color="grey" />
+
+                </View>
+            </TouchableOpacity>
+            {
+                item.type == "Công ty" && <TouchableOpacity style={styles.containInfo}
+                    onPress={() => item.money >= 5000000 
+                        ?
+                        navigation.navigate(screen.NewsScreen)
+                        : console.log("al0")
+                    }
+                >
+                    <Image source={require('../../image/buy.png')} style={styles.icon} />
+                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                        <Text style={styles.infotext}>Đăng bán</Text>
+                        <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                            <Icon name="right" type="antdesign" size={15} color="grey" />
+                        </View>
+
                     </View>
                 </TouchableOpacity>
             }
-
         </View>
     )
 }
 const AccounSetting18 = () => {
     const navigation = useNavigation()
     const [DataUser, setDataUser] = useState([])
-    
+
     const uid = auth().currentUser.uid
-    
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
     //Lấy thông tin người dùng
     const getInformation = async (uid) => {
         try {
@@ -83,31 +109,59 @@ const AccounSetting18 = () => {
     return (
         <View style={{ flex: 1, backgroundColor: palette.white }}>
             <View style={styles.header}>
-                <HeaderCustom uid={uid}/>
-                <Score />
+                <View style={{ marginTop: 4 }}>
+                    <HeaderView name="chevron-left" type="entypo"
+                        onPress={() => navigation.goBack()}
+                    />
+                </View>
+                <Image source={require('../../image/logo.png')} style={styles.ImageLogo} />
             </View>
             <ScrollView>
                 <View>
-                    <TouchableOpacity style={{ backgroundColor: palette.backgroundlightGreen }}>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate(screen.CouponScreen)}
+                    >
                         <View style={styles.containTS}>
-                            <Text style={styles.titleTS}>Tài sản</Text>
+                            <Text style={styles.titleTS}>Lộc phát</Text>
                             <Image source={require('../../image/coin.png')} style={styles.imgcoin} />
                         </View>
                     </TouchableOpacity>
                     {DataUser.map(data => <View>
-                          <View style={styles.containava}>
-                            <Image source={require("../../image/robot.png")} style={styles.imgava} />
+                        <View style={styles.containava}>
+                            <Image source={{ uri: data.ava }} style={styles.imgava} />
                             <Text style={styles.titleName}>{data.name}</Text>
                         </View>
-                        <View style={{ marginTop: 8, marginHorizontal: 16, marginBottom: 32 }}>
-                        {/**Chưa hoàn thiện*/}
+                        <Text style={styles.info}>THÔNG TIN TÀI KHOẢN</Text>
+                        <View style={styles.contain}>
+                            <ListInfo item={data} />
+                        </View>
+
+
                     </View>
-                    </View>
-                      
                     )}
-                    
+                    <Text style={styles.info}>CÀI ĐẶT</Text>
+                    <View style={styles.containerSwitch}>
+                        <Text style={styles.titleSwitch}>Bật thông báo</Text>
+                        <View style={styles.buttonSwitch}>
+                            <Switch
+                                trackColor={{ false: "#767577", true: "#33cc33" }}
+                                thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={toggleSwitch}
+                                value={isEnabled}
+                            />
+                        </View>
+                    </View>
+                    <TouchableOpacity style={{ flexDirection: 'row', flex: 1, marginHorizontal: 32, marginTop: 16, marginBottom: 32 }}>
+                        <Text style={{ color: palette.grey, fontSize: fontSize[4] }}>Đổi mật khẩu</Text>
+                        <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center', marginRight: 20 }}>
+                            <Icon name="right" type="antdesign" size={15} color="grey" />
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
+
+
         </View>
     )
 }
