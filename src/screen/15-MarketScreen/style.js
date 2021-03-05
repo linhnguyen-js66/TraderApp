@@ -3,7 +3,7 @@ import { fontSize, palette } from '../../theme'
 export default StyleSheet.create({
     header:{
         backgroundColor:palette.white,
-        paddingVertical:8,
+  
         paddingHorizontal:16,
         flexDirection:'row',
     },

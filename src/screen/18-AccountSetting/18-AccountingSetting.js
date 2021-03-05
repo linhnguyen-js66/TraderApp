@@ -62,11 +62,12 @@ const ListInfo = ({ item, data }) => {
                 </View>
             </TouchableOpacity>
             {
-                item.type == "Công ty" && <TouchableOpacity style={styles.containInfo}
+                item.type == "Công ty" && <View>
+                     <TouchableOpacity style={styles.containInfo}
                     onPress={() => item.money >= 5000000 
                         ?
-                        navigation.navigate(screen.NewsScreen)
-                        : console.log("al0")
+                        navigation.navigate(screen.UploadCart21)
+                        : console.log("Không thể sang trang khác")
                     }
                 >
                     <Image source={require('../../image/buy.png')} style={styles.icon} />
@@ -78,6 +79,21 @@ const ListInfo = ({ item, data }) => {
 
                     </View>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.containInfo}
+                    onPress={() => {
+
+                    }}
+                >
+                    <Image source={require('../../image/sanpham.png')} style={styles.icon} />
+                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                        <Text style={styles.infotext}>Sản phẩm </Text>
+                        <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                            <Icon name="right" type="antdesign" size={15} color="grey" />
+                        </View>
+
+                    </View>
+                </TouchableOpacity>
+                </View>
             }
         </View>
     )

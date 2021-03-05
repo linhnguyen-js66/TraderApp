@@ -18,7 +18,8 @@ const screen ={
     DetailCoupon:"DetailCoupon",
     AccountSetting:"AccountSetting",
     DetailComment:"DetailComment",
-    AddInformation:"AddInformation"
+    AddInformation:"AddInformation",
+    UploadCart21:"UploadCart"
 }
 
 export {screen}

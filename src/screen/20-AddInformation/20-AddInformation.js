@@ -9,7 +9,7 @@ import { SaveInformationUser } from '../../service/auth'
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
+import {launchImageLibrary } from 'react-native-image-picker'
 const AddInformation20 = ({route}) => {
     const { email } = route.params
     const navigation = useNavigation()

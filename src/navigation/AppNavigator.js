@@ -25,7 +25,7 @@ import CouponScreen from '../screen/16-CouponScreen'
 import DetailCoupon from '../screen/17-DetailCoupon'
 import AccountSetting from '../screen/18-AccountSetting'
 import DetailComment from '../screen/19-DetailComment'
-
+import UploadCart21 from '../screen/21-UploadCart-Screen'
 import { screen } from './screen'
 import { palette, spacing } from '../theme';
 const Stack = createStackNavigator()
@@ -149,6 +149,7 @@ const HomeTab = () => {
           <Stack.Screen name="ThemeScreen" component={ThemeScreen}/>
           <Stack.Screen name="SearchScreen" component={SearchScreen}/>
           <Stack.Screen name="StatusScreen" component={StatusScreen}/>
+          <Stack.Screen name="UploadCart" component={UploadCart21}/>
         </Stack.Navigator>
     )
 }

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, ScrollView, TouchableOpacity, Image, FlatList } from "react-native"
+import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, RefreshControl, ActivityIndicator } from "react-native"
 import styles from './style'
 import { useNavigation } from '@react-navigation/native'
 import { screen } from '../../navigation/screen'
 import { HeaderCustom, Score } from '../../components/HeaderCustom'
 import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
+import { fontSize, palette } from '../../theme'
 const Data = [
     {
         id: 1,
@@ -43,16 +44,28 @@ const Data = [
     //     description: "Đây là vài dòng sơ qua về bài viết này mỗi bài báo chỉ được review còn nhiều lắm muốn biết phải mua báo mà đọc không thì click vào"
     // }
 ]
-const ListHorizontal = ({ data, onPress }) => {
-    const {name,image} = data
+const ListHorizontal = ({ data, onPress, theme }) => {
+    const { name, image, idField, index } = data
     return (
-        <TouchableOpacity style={{ marginLeft: 16 }}>
+        <TouchableOpacity style={{ marginLeft: 16, marginBottom: 16 }}>
+            {theme.map(item => {
+                if (item.id == idField) {
+                    return <View style={styles.containTheme} key={item.id}>
+                        <Image source={{ uri: item.image }} style={styles.imgTheme} />
+                        <Text style={styles.texttheme}>{item.name}</Text>
+                    </View>
+                }
+            })}
+
             <View>
-                <Image source={{uri:image}} style={styles.imageList} />
-                <View style={{position: 'absolute'}}>
-                    <Text style={styles.title}>
-                        {name.substring(0, 50)}...
-                    </Text>
+                <Image source={{ uri: image }} style={styles.imageList} />
+                <View style={{ position: 'absolute' }}>
+
+                    <View style={styles.containText}>
+                        <Text style={styles.title}>
+                            {name.substring(0, 50)}
+                        </Text>
+                    </View>
                 </View>
             </View>
         </TouchableOpacity>
@@ -60,17 +73,19 @@ const ListHorizontal = ({ data, onPress }) => {
 }
 
 const List3 = ({ data, onPress }) => {
-    const { image, title, description, time } = data
+    const { image, name, description, dating, id } = data
     return (
-        <TouchableOpacity style={{ flexDirection: 'row', marginBottom: 16 }}
+        <TouchableOpacity style={{ flexDirection: 'row', marginBottom: 16, marginHorizontal: 16 }}
             onPres={onPress}
+            key={id}
         >
             <View style={{ height: 80 }}>
-                <Image source={require('../../image/sing.jpg')} style={styles.imageList3} />
+                <Image source={{ uri: image }} style={styles.imageList3} />
             </View>
             <View style={styles.descrptionList3}>
-                <Text style={styles.titleFirst}>{title}</Text>
-                <Text style={styles.detailList3}>{time}</Text>
+                <Text style={styles.titleFirst}>{name}</Text>
+                {dating !== "" && <Text style={styles.detailList3}>{dating}</Text>}
+
                 <Text style={styles.detailList3}>
                     {description.substring(0, 40)} ...
                 </Text>
@@ -78,47 +93,168 @@ const List3 = ({ data, onPress }) => {
         </TouchableOpacity>
     )
 }
+const HeaderTop = ({ data, dataTheme }) => {
+
+    return (
+        <View style={{ marginTop: 8 }}>
+            <FlatList
+                data={data}
+                horizontal={true}
+                // keyExtractor={item => item.id}
+                renderItem={({ item, index }) => <ListHorizontal data={item} theme={dataTheme} index={index} />}
+            />
+        </View>
+    )
+}
 const NewsScreen = () => {
     const navigation = useNavigation()
     let uid = auth().currentUser.uid
-    const [dataNewsHorizontal,setDataNewsHorizontal] = useState([])
-    const getNewsHorizontal = async () => {
-        let resultData = []
-        let d = new Date()
-        let ngay = d.getDate()
-        let thang = d.getMonth() + 1
-        let nam = d.getFullYear();
-        let today = `${nam}/${thang}/${ngay}`
-        let snapshot = await firestore().collection("DataNews").orderBy('id').get()
-        snapshot.docs.map(item => resultData.push(item.data()))
-        setDataNewsHorizontal(resultData)
-        console.log(dataNewsHorizontal.length)
+    const [dataNewsHorizontal, setDataNewsHorizontal] = useState([])
+    //sort
+    function byDate(a, b) {
+        //by month and then by day
+        let d1 = new Date(a.createdAt); // 1993-02-15T00:00:00Z =>   1993-02-14T20:00:00EST
+        let d2 = new Date(b.createdAt);
+
+        return d2 - d1
+
     }
-    useEffect(()=>{getNewsHorizontal()},[])
+
+    const getNewsHorizontal = async () => {
+        let snapshot = await firestore().collection("DataNews").get()
+        let resultData = []
+        snapshot.docs.map(item => resultData.push(item.data()))
+        let resultOne = resultData.filter(item => item.idField == 1)
+        let resultTwo = resultData.filter(item => item.idField == 2)
+        let resultThree = resultData.filter(item => item.idField == 3)
+        let resultFive = resultData.filter(item => item.idField == 5)
+        let lastResult = [
+            resultOne.sort(byDate)[0],
+            resultTwo.sort(byDate)[0],
+            resultThree.sort(byDate)[0],
+            resultFive.sort(byDate)[0]
+        ]
+        setDataNewsHorizontal(lastResult)
+    }
+    //get DataTheme 
+    const [DataTheme, setDataTheme] = useState([])
+
+    const getDataTheme = async () => {
+        let result = []
+        let snapshot = await firestore().collection('CategoryTheme').get()
+        snapshot.docs.map(item => result.push(item.data()))
+        setDataTheme(result)
+    }
+    useEffect(() => {
+        getNewsHorizontal()
+        getDataTheme()
+        getDataNews()
+    }, [])
+    //data news
+
+    //Hiển thị các sản phẩm trong DataProduct
+    const [DataPost, setDataPost] = useState([])
+    const [lastDoc, setLastDoc] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [isMoreLoading, setIsMoreLoading] = useState(false);
+    let onEndReachedCalledDuringMomentum = false
+    const getDataNews = async () => {
+        setIsLoading(true)
+        let snapshot = await firestore().collection("DataNews").orderBy('id').limit(10).get()
+        if (!snapshot.empty) {
+            let listPost = []
+
+            setLastDoc(snapshot.docs[snapshot.docs.length - 1])
+            snapshot.docs.map(item => {
+                listPost.push(item.data())
+
+            })
+
+            setDataPost(listPost)
+        }
+        else {
+            setLastDoc(null)
+        }
+        setIsLoading(false)
+    }
+    const getMoreDataNews = async () => {
+        if (lastDoc) {
+            setIsMoreLoading(true)
+
+            setTimeout(async () => {
+                let snapshot = await firestore().collection("DataNews").orderBy('id').limit(10).startAfter(lastDoc.data().id).get()
+                if (!snapshot.empty) {
+                    let listPost = DataPost
+
+                    setLastDoc(snapshot.docs[snapshot.docs.length - 1])
+                    snapshot.docs.map(item => {
+                       listPost.push(item.data())
+                        
+                    })
+
+
+                    setDataPost(listPost)
+                    if (snapshot.docs.length < 3) setLastDoc(null)
+                }
+                else {
+                    setLastDoc(null)
+                }
+                setIsMoreLoading(false)
+            }, 1000)
+        }
+        onEndReachedCalledDuringMomentum = true
+    }
+    const onRefresh = () => {
+        setTimeout(() => {
+            getDataNews()
+        }, 1000)
+    }
+
+    const renderFooter = () => {
+        if (!isMoreLoading) return true
+        return (
+            <ActivityIndicator
+                size='large'
+                color={palette.buttonColor}
+                style={{ marginBottom: 16 }}
+            />
+        )
+    }
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={styles.header}>
-                <HeaderCustom uid={uid}/>
+                <HeaderCustom uid={uid} />
                 <Score />
             </View>
-            {/* List1 */}
-            <View style={{marginTop:16}}>
-                <FlatList
-                    data={dataNewsHorizontal}
-                    horizontal={true}
-                    keyExtractor={item => item.id}
-                    renderItem={({ item, index }) => <ListHorizontal data={item}/>}
-                />
-            </View>
+
+
             {/* List3 */}
-            <View style={{ marginHorizontal: 16,flex:1,marginTop:16}}>
-                <FlatList
-                    data={Data}
-                    renderItem={({ item, index }) => <List3 data={item}
-                        onPress={() => navigation.navigate(screen.DetailNewScreen)}
-                    />}
-                />
-            </View>
+
+            <FlatList
+                data={DataPost}
+                renderItem={({ item, index }) => <List3 data={item}
+                    onPress={() => navigation.navigate(screen.DetailNewScreen)}
+                />}
+                // ListHeaderComponent={() => <HeaderTop data={dataNewsHorizontal} dataTheme={DataTheme} />}
+                onEndReachedThreshold={1}
+
+                onEndReached={() => {
+                    if (!onEndReachedCalledDuringMomentum && !isMoreLoading) {
+                        getMoreDataNews()
+                    }
+                }}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isLoading}
+                        onRefresh={() => {
+                            onRefresh()
+                        }}
+                    />
+                }
+                onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum = false; }}
+                ListFooterComponent={renderFooter}
+            />
+
         </View>
     )
 }

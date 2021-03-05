@@ -9,6 +9,7 @@ import firestore from '@react-native-firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
 import { screen } from '../../navigation/screen'
 import auth from '@react-native-firebase/auth'
+import { SliderBox } from "react-native-image-slider-box"
 const Choose = [
     {
         id: 1,
@@ -30,7 +31,11 @@ let Type = [
         name: "Nhà cho thuê"
     }
 ]
-
+let DataImage = [
+    require('../../image/qcao1.png'),
+    require('../../image/qcao2.png'),
+    require('../../image/qcao3.jpg')
+]
 const ControlBar = ({ onPress }) => {
     return (
         <View>
@@ -77,6 +82,7 @@ const ListProduct = ({ data, index, onPress }) => {
         </TouchableOpacity>
     )
 }
+
 const MarketScreen15 = () => {
     const [colorType, setColorType] = useState("")
     const navigation = useNavigation()
@@ -87,9 +93,9 @@ const MarketScreen15 = () => {
     const [isMoreLoading, setIsMoreLoading] = useState(false);
     const [lastDoc, setLastDoc] = useState(null);
     const [restaurants, setRestaurants] = useState([]);
-  
+
     let restaurantsRef = colorType == 2 ? firestore().collection('Address') : firestore().collection('DataProduct');
-    
+
     useEffect(() => {
         getRestaurants();
     }, []);
@@ -142,11 +148,11 @@ const MarketScreen15 = () => {
         onEndReachedCalledDuringMomentum = true;
     }
     const onRefresh = () => {
-      
-            setTimeout(() => {
+
+        setTimeout(() => {
             getRestaurants();
         }, 1000);
-         
+
     }
 
     const renderFooter = () => {
@@ -155,12 +161,12 @@ const MarketScreen15 = () => {
             <ActivityIndicator
                 size='large'
                 color={palette.buttonColor}
-                style={{ marginBottom: 200 }}
+                style={{ marginBottom: 100 }}
             />
         )
     }
     //Sắp xếp theo giá cả
-    const [sortPrice,setSortPrice] = useState(false)
+    const [sortPrice, setSortPrice] = useState(false)
     const getDataToSort = async () => {
         setIsLoading(true);
 
@@ -172,7 +178,7 @@ const MarketScreen15 = () => {
             setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
 
             snapshot.docs.map(item => newRestaurants.push(item.data()))
-            
+
             setRestaurants(newRestaurants);
         } else {
             setLastDoc(null);
@@ -181,72 +187,85 @@ const MarketScreen15 = () => {
         setIsLoading(false);
     }
     let uid = auth().currentUser.uid
-        return (
+    return (
         <View style={{ backgroundColor: 'white', flex: 1 }}>
 
             {/**Header */}
             <View style={styles.header}>
-                <HeaderCustom uid={uid}/>
+                <HeaderCustom uid={uid} />
                 <Score />
             </View>
-            {/**Controlbar */}
 
-            <View style={styles.containControl}>
-                <View style={{ justifyContent: 'center' }}>
-                    <Image source={require('../../image/logo.png')} style={styles.imgLogo} />
-                </View>
-                <View style={styles.control}>
-                    <ControlBar />
-                </View>
-            </View>
-            {/**ListProduct */}
-            <View style={styles.containType}>
-                {Type.map(item =>
-                    <TouchableOpacity key={item.id}
-                        style={[styles.type, colorType == item.id ? { backgroundColor: '#ffcc00' } : { backgroundColor: "#E5E5E5" }]}
-                        onPress={() => {
-                            colorType == item.id ? getRestaurants() : null
-                            setColorType(item.id)
-                        }}
-                    >
-                        <Text style={styles.nametype}># {item.name}</Text>
-                    </TouchableOpacity>
-                )}
-            </View>
             <View style={{ marginTop: 8 }}>
-                    <FlatList
-                        data={restaurants}
-                        marginBottom={32}
-                        keyExtractor={item => item.id}
-                        renderItem={({ item, index }) => <ListProduct
-                            data={item}
-                            index={index}
-                            onPress={() => navigation.navigate(screen.AddressAndMarket, {
-                                id: item.id
-                            })}
-                        />}
-                        numColumns={2}
-                        onEndReachedThreshold={1}
+                <FlatList
+                    data={restaurants}
+                    marginBottom={32}
+                    keyExtractor={item => item.id}
+                    renderItem={({ item, index }) => <ListProduct
+                        data={item}
+                        index={index}
+                        onPress={() => navigation.navigate(screen.AddressAndMarket, {
+                            id: item.id
+                        })}
+                    />}
+                    numColumns={2}
+                    onEndReachedThreshold={1}
 
-                        onEndReached={() => {
-                            if (!onEndReachedCalledDuringMomentum && !isMoreLoading) {
-                              getMore()
-                            }
-                        }}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={isLoading}
-                                onRefresh={() => {
-                                    onRefresh()
-                                   console.log("refresh")
-                                }}
-                            />
+                    onEndReached={() => {
+                        if (!onEndReachedCalledDuringMomentum && !isMoreLoading) {
+                            getMore()
                         }
-                        onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum = false; }}
-                        ListFooterComponent={renderFooter}
+                    }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isLoading}
+                            onRefresh={() => {
+                                onRefresh()
+                                console.log("refresh")
+                            }}
+                        />
+                    }
+                    onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum = false; }}
+                    ListFooterComponent={renderFooter}
+                    //headerComponent
+                    ListHeaderComponent={() =><View>
+                        {/**Controlbar */}
+                        <SliderBox
+                            images={DataImage}
+                            sliderBoxHeight={200}
+                            onCurrentImagePressed={index => console.warn(`image ${index} pressed`)}
+                            dotColor="#FFEE58"
+                            inactiveDotColor="#90A4AE"
+                            paginationBoxVerticalPadding={20}
+                            autoplay
+                            circleLoop
+                        />
+                        <View style={styles.containControl}>
+                            <View style={{ justifyContent: 'center' }}>
+                                <Image source={require('../../image/logo.png')} style={styles.imgLogo} />
+                            </View>
+                            <View style={styles.control}>
+                                <ControlBar />
+                            </View>
+                        </View>
+                        {/**ListProduct */}
+                        <View style={styles.containType}>
+                            {Type.map(item =>
+                                <TouchableOpacity key={item.id}
+                                    style={[styles.type, colorType == item.id ? { backgroundColor: '#ffcc00' } : { backgroundColor: "#E5E5E5" }]}
+                                    onPress={() => {
+                                  
+                                        colorType == item.id ? getRestaurants() : null
+                                        setColorType(item.id)
+                                    }}
+                                >
+                                    <Text style={styles.nametype}># {item.name}</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    </View>}
+                />
 
-                    />
-                
 
             </View>
 

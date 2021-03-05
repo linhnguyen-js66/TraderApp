@@ -37,7 +37,28 @@ export default StyleSheet.create({
         color:palette.white,
         fontWeight:'bold',
         fontSize:fontSize[0],
-        marginTop:120,
-        paddingHorizontal:16
+        paddingHorizontal:16,
+        paddingTop:8,
+        paddingBottom:16
     },
+    containText:{
+        backgroundColor: 'rgba(52, 52, 52, 0.8)',
+        borderBottomEndRadius:10,
+        borderBottomStartRadius:10,
+        marginTop:125
+    },
+    containTheme:{
+        flexDirection:'row',
+        marginBottom:8
+    },
+    imgTheme:{
+        width:25,
+        height:25
+    },
+    texttheme:{
+        alignSelf:'center',
+        marginLeft:4,
+        fontWeight:'bold',
+        color:palette.grey
+    }
 })
