@@ -26,6 +26,7 @@ import DetailCoupon from '../screen/17-DetailCoupon'
 import AccountSetting from '../screen/18-AccountSetting'
 import DetailComment from '../screen/19-DetailComment'
 import UploadCart21 from '../screen/21-UploadCart-Screen'
+import HistoryUpload25 from '../screen/22-HistoryUpload-Screen'
 import { screen } from './screen'
 import { palette, spacing } from '../theme';
 const Stack = createStackNavigator()
@@ -150,6 +151,7 @@ const HomeTab = () => {
           <Stack.Screen name="SearchScreen" component={SearchScreen}/>
           <Stack.Screen name="StatusScreen" component={StatusScreen}/>
           <Stack.Screen name="UploadCart" component={UploadCart21}/>
+          <Stack.Screen name="HistoryUpload25" component={HistoryUpload25}/>
         </Stack.Navigator>
     )
 }

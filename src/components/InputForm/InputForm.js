@@ -5,7 +5,13 @@ const InputForm = ({title,placeholder,isPassWord,onChangeText,value}) => {
     return(
         <View>
             <Text style={styles.title}>{title}</Text>
-             <TextInput style={styles.textInput} value={value} onChangeText={onChangeText} placeholder={placeholder} secureTextEntry={isPassWord}/>
+             <TextInput style={styles.textInput}
+              value={value} 
+              onChangeText={onChangeText} 
+              placeholder={placeholder} 
+              secureTextEntry={isPassWord}
+     
+              />
         </View>
     )
 }

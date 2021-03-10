@@ -9,28 +9,7 @@ import { screen } from '../../navigation/screen'
 import { fontSize, palette } from '../../theme'
 import auth from '@react-native-firebase/auth'
 import firestore from "@react-native-firebase/firestore"
-let Data = [
-    {
-        id: 1,
-        name: 'Tài khoản'
-    },
-    {
-        id: 2,
-        name: "Email"
-    },
-    {
-        id: 3,
-        name: "Điểm"
-    },
-    {
-        id: 4,
-        name: "Mã giảm giá"
-    },
-    {
-        id: 5,
-        name: "Đã lưu"
-    }
-]
+
 const ListInfo = ({ item, data }) => {
     const navigation = useNavigation()
     return (
@@ -44,13 +23,19 @@ const ListInfo = ({ item, data }) => {
                 <Text style={styles.infotext}>{item.type}</Text>
             </View>
             <View style={styles.containInfo}>
+                {item.type == "Cá nhân" ?
                 <Image source={require('../../image/point.png')} style={styles.icon} />
-                <Text style={styles.infotext}>{item.count}</Text>
+                :
+                <Image source={require('../../image/money.webp')} style={styles.icon} />
+                 }
+                
+                <Text style={styles.infotext}>{item.type == "Cá nhân" ? item.count : item.money+' VNĐ'}</Text>
             </View>
-            <View style={styles.containInfo}>
+            {item.type == "Cá nhân" && <View style={styles.containInfo}>
                 <Image source={require('../../image/coupon.png')} style={styles.icon} />
-                <Text style={styles.infotext}>Mã khuyến mãi</Text>
-            </View>
+                <Text style={styles.infotext}>Ví voucher</Text>
+            </View>}
+
             <TouchableOpacity style={styles.containInfo}>
                 <Image source={require('../../image/save.png')} style={styles.icon} />
                 <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -63,36 +48,36 @@ const ListInfo = ({ item, data }) => {
             </TouchableOpacity>
             {
                 item.type == "Công ty" && <View>
-                     <TouchableOpacity style={styles.containInfo}
-                    onPress={() => item.money >= 5000000 
-                        ?
-                        navigation.navigate(screen.UploadCart21)
-                        : console.log("Không thể sang trang khác")
-                    }
-                >
-                    <Image source={require('../../image/buy.png')} style={styles.icon} />
-                    <View style={{ flexDirection: 'row', flex: 1 }}>
-                        <Text style={styles.infotext}>Đăng bán</Text>
-                        <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
-                            <Icon name="right" type="antdesign" size={15} color="grey" />
+                    <TouchableOpacity style={styles.containInfo}
+                        onPress={() => item.money >= 0
+                            ?
+                            navigation.navigate(screen.UploadCart21)
+                            : console.log("Không thể sang trang khác")
+                        }
+                    >
+                        <Image source={require('../../image/buy.png')} style={styles.icon} />
+                        <View style={{ flexDirection: 'row', flex: 1 }}>
+                            <Text style={styles.infotext}>Đăng bán</Text>
+                            <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                                <Icon name="right" type="antdesign" size={15} color="grey" />
+                            </View>
+
                         </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.containInfo}
+                        onPress={() => {
+                            navigation.navigate(screen.HistoryUpload25)
+                        }}
+                    >
+                        <Image source={require('../../image/sanpham.png')} style={styles.icon} />
+                        <View style={{ flexDirection: 'row', flex: 1 }}>
+                            <Text style={styles.infotext}>Lịch sử đăng bán</Text>
+                            <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                                <Icon name="right" type="antdesign" size={15} color="grey" />
+                            </View>
 
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.containInfo}
-                    onPress={() => {
-
-                    }}
-                >
-                    <Image source={require('../../image/sanpham.png')} style={styles.icon} />
-                    <View style={{ flexDirection: 'row', flex: 1 }}>
-                        <Text style={styles.infotext}>Sản phẩm </Text>
-                        <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
-                            <Icon name="right" type="antdesign" size={15} color="grey" />
                         </View>
-
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
                 </View>
             }
         </View>
@@ -138,7 +123,7 @@ const AccounSetting18 = () => {
                         onPress={() => navigation.navigate(screen.CouponScreen)}
                     >
                         <View style={styles.containTS}>
-                            <Text style={styles.titleTS}>Lộc phát</Text>
+                            <Text style={styles.titleTS}>Mã khuyến mại</Text>
                             <Image source={require('../../image/coin.png')} style={styles.imgcoin} />
                         </View>
                     </TouchableOpacity>

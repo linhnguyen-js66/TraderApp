@@ -4,9 +4,8 @@ export default StyleSheet.create({
     ImageLogo:{
         resizeMode:"contain",
         width:undefined,
-        height:25,
+        height:35,
         marginTop:12,
-        marginBottom:16,
         flex:1
     },
     header:{

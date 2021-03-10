@@ -8,6 +8,7 @@ import com.imagepicker.ImagePickerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.imagepicker.ImagePickerPackage;
+import com.imagepicker.ImagePickerPackage;
 import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactInstanceManager;

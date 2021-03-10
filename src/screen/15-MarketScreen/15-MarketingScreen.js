@@ -242,7 +242,7 @@ const MarketScreen15 = () => {
                         />
                         <View style={styles.containControl}>
                             <View style={{ justifyContent: 'center' }}>
-                                <Image source={require('../../image/logo.png')} style={styles.imgLogo} />
+                                <Image source={require('../../image/logo2.png')} style={styles.imgLogo} />
                             </View>
                             <View style={styles.control}>
                                 <ControlBar />

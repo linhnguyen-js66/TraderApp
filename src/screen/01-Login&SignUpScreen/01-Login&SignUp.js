@@ -20,7 +20,7 @@ const LoginSignUp = () => {
     const [processSignUp,setProcessSignUp] = useState(false)
     const [processSignIn,setProcessSignIn] = useState(false)
     return (
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={{backgroundColor:'white'}}>
             <View style={{marginTop:64}}>
                 <Image source={require('../../image/logo.png')} style={styles.logo}/>
             </View>

@@ -19,7 +19,8 @@ const screen ={
     AccountSetting:"AccountSetting",
     DetailComment:"DetailComment",
     AddInformation:"AddInformation",
-    UploadCart21:"UploadCart"
+    UploadCart21:"UploadCart",
+    HistoryUpload25:'HistoryUpload25'
 }
 
 export {screen}

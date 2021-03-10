@@ -4,8 +4,9 @@ import { spacing, palette, fontSize } from "../../theme"
 export default StyleSheet.create({
     logo:{
         width:undefined,
-        height:50,
-        resizeMode:'contain'
+        height:100,
+        resizeMode:'contain',
+        alignItems:'center'
     },
     containerTopTab: {
         flexDirection: 'row',
