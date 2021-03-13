@@ -241,7 +241,7 @@ const DetailComment18 = ({ route }) => {
         <View style={{ flex: 1, backgroundColor: 'white' }}>
 
             <View style={styles.containHead}>
-                <HeaderView name="left" type="antdesign" onPress={() => navigation.navigate(screen.QuestionScreen)} />
+                <HeaderView name="left" type="antdesign" onPress={() => navigation.goBack()} />
                 <Text style={styles.containTextView}>Bình luận</Text>
             </View>
             <View style={{ paddingHorizontal: 16, paddingTop: 16 }}>

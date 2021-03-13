@@ -8,8 +8,8 @@ export default StyleSheet.create({
         flexDirection:'row',
     },
     imgLogo:{
-      height:50,
-      width:135
+      width:135,
+      height:30
     },
     containControl:{
         flexDirection:'row',
@@ -63,6 +63,7 @@ export default StyleSheet.create({
         fontSize:fontSize[3],
         color:palette.buttonColor,
         fontWeight:'bold',
+        flex:1
     },
     containType:{
         flexDirection:'row',
@@ -127,5 +128,11 @@ export default StyleSheet.create({
         fontSize:fontSize[4],
         alignSelf:'center',
         marginBottom:32
+    },
+    iconShipping:{
+        width:30,
+        height:30,
+        alignSelf:'flex-end',
+        marginRight:8
     }
 })

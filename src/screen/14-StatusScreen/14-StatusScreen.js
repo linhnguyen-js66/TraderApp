@@ -75,7 +75,8 @@ const StatusScreen14 = ({route}) => {
                     idUserLike: [],
                     idUser: uid,
                     status: status,
-                    idPost: makeid()
+                    idPost: makeid(),
+                    idUserSaved:[]
                 }
                 await firestore().collection("DataStatus").add(newStatus)
 

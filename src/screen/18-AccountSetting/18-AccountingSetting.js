@@ -36,7 +36,9 @@ const ListInfo = ({ item, data }) => {
                 <Text style={styles.infotext}>Ví voucher</Text>
             </View>}
 
-            <TouchableOpacity style={styles.containInfo}>
+            <TouchableOpacity style={styles.containInfo}
+               onPress={()=>navigation.navigate(screen.SavePostScreen23)}
+            >
                 <Image source={require('../../image/save.png')} style={styles.icon} />
                 <View style={{ flexDirection: 'row', flex: 1 }}>
                     <Text style={styles.infotext}>Đã lưu</Text>
@@ -115,7 +117,7 @@ const AccounSetting18 = () => {
                         onPress={() => navigation.goBack()}
                     />
                 </View>
-                <Image source={require('../../image/logo.png')} style={styles.ImageLogo} />
+                <Image source={require('../../image/logo2.png')} style={styles.ImageLogo} />
             </View>
             <ScrollView>
                 <View>

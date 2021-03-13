@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { TextInput } from 'react-native'
-import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, ActivityIndicator, RefreshControl } from "react-native"
+import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, ActivityIndicator, RefreshControl, Picker } from "react-native"
 import { Icon } from 'react-native-elements'
 import styles from './style'
 import { HeaderCustom, Score } from '../../components/HeaderCustom'
@@ -36,21 +36,31 @@ let DataImage = [
     require('../../image/qcao2.png'),
     require('../../image/qcao3.jpg')
 ]
-const ControlBar = ({ onPress }) => {
+const ControlPicker = ({ onValueChange, Data, state, onClickSort }) => {
     return (
         <View>
             <View style={{ flexDirection: 'row' }}>
 
-                <View style={styles.containControlChoose}>
-                    <Text style={styles.textChoose}>Giá cả</Text>
-                    {/* <TouchableOpacity style={{ justifyContent: 'center' }} onPress={onPress}>
-                        <Icon name="caretdown" type="antdesign" size={15} color="#595959" />
-                    </TouchableOpacity> */}
-                </View>
+                <TouchableOpacity style={styles.containControlChoose}
+                >
+                    <Picker
+                        selectedValue={state}
+                        style={{ height: 50, width:100}}
+                        onValueChange={onValueChange}
+                    >
+                        {Data.map(item =>
+                            <Picker.Item label={item.name} value={item.id} />
+                        )}
+
+
+                    </Picker>
+                </TouchableOpacity>
 
                 <View style={styles.containSort}>
                     <Text style={styles.textChoose}>Sắp xếp</Text>
-                    <TouchableOpacity style={{ alignItems: 'center', flexDirection: 'row', marginRight: 16 }}>
+                    <TouchableOpacity style={{ alignItems: 'center', flexDirection: 'row', marginRight: 16 }}
+                      onPress={onClickSort}
+                    >
                         <Icon name="arrow-long-up" type="entypo" size={15} color="#595959" />
                         <Icon name="arrow-long-down" type="entypo" size={15} color="#595959" />
                     </TouchableOpacity>
@@ -72,10 +82,13 @@ const ListProduct = ({ data, index, onPress }) => {
                 <Text style={styles.textDetail}>
                     {name.substring(0, 40)}...
                 </Text>
-                <View style={{ flex: 1, justifyContent: 'flex-end', marginVertical: 8 }}>
+                <View style={{ flex: 1,justifyContent: 'flex-end', marginVertical: 8}}>
+                    <View style={{flexDirection:'row'}}>
                     <Text style={styles.textPrice}>
-                        {price}
+                      {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")+"đ"} 
                     </Text>
+                    <Image source={require('../../image/shipping.png')} style={styles.iconShipping}/>
+                    </View>
                 </View>
 
             </View>
@@ -93,7 +106,8 @@ const MarketScreen15 = () => {
     const [isMoreLoading, setIsMoreLoading] = useState(false);
     const [lastDoc, setLastDoc] = useState(null);
     const [restaurants, setRestaurants] = useState([]);
-
+    const [ChooseType, setChooseType] = useState(Choose[0].id)
+    const [clickSort,setClickSort] = useState(false)
     let restaurantsRef = colorType == 2 ? firestore().collection('Address') : firestore().collection('DataProduct');
 
     useEffect(() => {
@@ -109,7 +123,7 @@ const MarketScreen15 = () => {
             let newRestaurants = [];
 
             setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-
+       
             snapshot.docs.map(item => newRestaurants.push(item.data()))
 
             setRestaurants(newRestaurants);
@@ -166,27 +180,43 @@ const MarketScreen15 = () => {
         )
     }
     //Sắp xếp theo giá cả
-    const [sortPrice, setSortPrice] = useState(false)
-    const getDataToSort = async () => {
-        setIsLoading(true);
+    function byDateUp(a, b) {
+        //by month and then by day
+        let d1 = new Date(a.dateon); // 1993-02-15T00:00:00Z =>   1993-02-14T20:00:00EST
+        let d2 = new Date(b.dateon);
 
-        const snapshot = await restaurantsRef.orderBy('id').limit(limit).get();
+        return d2 - d1
 
-        if (!snapshot.empty) {
-            let newRestaurants = [];
-
-            setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-
-            snapshot.docs.map(item => newRestaurants.push(item.data()))
-
-            setRestaurants(newRestaurants);
-        } else {
-            setLastDoc(null);
-        }
-
-        setIsLoading(false);
     }
+    function byDateDown(a, b) {
+        //by month and then by day
+        let d1 = new Date(a.dateon); // 1993-02-15T00:00:00Z =>   1993-02-14T20:00:00EST
+        let d2 = new Date(b.dateon);
+
+        return d1 - d2
+
+    }
+    const sortProduct = () => {
+       if(ChooseType == 1){
+           if(clickSort == false){
+               restaurants.sort((a,b)=> b.price - a.price)
+           }
+           else{
+            restaurants.sort((a,b)=> a.price - b.price)
+           }
+       }
+       else{
+           if(clickSort == false){
+               restaurants.sort(byDateUp)
+           }
+           else{
+               restaurants.sort(byDateDown)
+           }
+       }
+    }
+    
     let uid = auth().currentUser.uid
+    
     return (
         <View style={{ backgroundColor: 'white', flex: 1 }}>
 
@@ -228,7 +258,7 @@ const MarketScreen15 = () => {
                     onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum = false; }}
                     ListFooterComponent={renderFooter}
                     //headerComponent
-                    ListHeaderComponent={() =><View>
+                    ListHeaderComponent={() => <View>
                         {/**Controlbar */}
                         <SliderBox
                             images={DataImage}
@@ -245,7 +275,15 @@ const MarketScreen15 = () => {
                                 <Image source={require('../../image/logo2.png')} style={styles.imgLogo} />
                             </View>
                             <View style={styles.control}>
-                                <ControlBar />
+                                <ControlPicker
+                                    Data={Choose}
+                                    onValueChange={(itemValue, itemIndex) => setChooseType(itemValue)}
+                                    state={ChooseType}
+                                    onClickSort={()=>{
+                                        setClickSort(clickSort ? false : true)
+                                        sortProduct()
+                                    }}
+                                />
                             </View>
                         </View>
                         {/**ListProduct */}
@@ -254,7 +292,7 @@ const MarketScreen15 = () => {
                                 <TouchableOpacity key={item.id}
                                     style={[styles.type, colorType == item.id ? { backgroundColor: '#ffcc00' } : { backgroundColor: "#E5E5E5" }]}
                                     onPress={() => {
-                                  
+
                                         colorType == item.id ? getRestaurants() : null
                                         setColorType(item.id)
                                     }}

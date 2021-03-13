@@ -27,8 +27,12 @@ import AccountSetting from '../screen/18-AccountSetting'
 import DetailComment from '../screen/19-DetailComment'
 import UploadCart21 from '../screen/21-UploadCart-Screen'
 import HistoryUpload25 from '../screen/22-HistoryUpload-Screen'
+import SavePostScreen23 from '../screen/23-SavePost-Screen'
+import DetailSavePost24 from '../screen/24-DetailSavePostScreen'
+import DetailStatus25 from '../screen/25-DetailStatus-Screen'
 import { screen } from './screen'
 import { palette, spacing } from '../theme';
+import MarketScreen15 from '../screen/15-MarketScreen';
 const Stack = createStackNavigator()
 const Tab = createMaterialBottomTabNavigator()
 
@@ -152,6 +156,9 @@ const HomeTab = () => {
           <Stack.Screen name="StatusScreen" component={StatusScreen}/>
           <Stack.Screen name="UploadCart" component={UploadCart21}/>
           <Stack.Screen name="HistoryUpload25" component={HistoryUpload25}/>
+          <Stack.Screen name="SavePost23" component={SavePostScreen23}/>
+          <Stack.Screen name="DetailSavePost24" component={DetailSavePost24}/>
+          <Stack.Screen name="DetailStatus25" component={DetailStatus25}/>
         </Stack.Navigator>
     )
 }

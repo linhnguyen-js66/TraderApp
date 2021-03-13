@@ -4,7 +4,7 @@ export default StyleSheet.create({
     ImageLogo:{
         resizeMode:"contain",
         width:undefined,
-        height:35,
+        height:25,
         marginTop:12,
         flex:1
     },

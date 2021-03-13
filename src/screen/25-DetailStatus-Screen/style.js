@@ -1,23 +1,24 @@
 import {StyleSheet} from 'react-native'
-import { fontSize, palette } from '../../theme'
+import {fontSize, palette} from '../../theme'
 export default StyleSheet.create({
-    header:{
-       flexDirection:'row',
-        backgroundColor:palette.backgroundlightGreen,
+    textCategory: {
+       alignSelf:'center',
+       fontWeight:'bold',
+       fontSize:fontSize[4],
+       paddingVertical:12
     },
-    contain:{
-        backgroundColor:palette.backgroundlightGreen,
-        paddingVertical:8,
-        paddingHorizontal:16
+    header: {
+        flexDirection: 'row',
+        borderBottomWidth: 0.4,
     },
-    imageHeader:{
-        resizeMode:'contain',
-        width:undefined,
-        height:85,
-        marginTop:32
-    },
-    containHeader:{
-        backgroundColor:palette.backgroundlightGreen
+    imageHeader: {
+        resizeMode: 'contain',
+        width: undefined,
+        height: 85,
+        marginTop: 32
+    }, 
+    containTextCategory:{
+        flex:1
     },
     text1:{
         fontWeight:'bold',

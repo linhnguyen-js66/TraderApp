@@ -3,15 +3,15 @@ import { spacing, palette, fontSize } from "../../theme"
 
 export default StyleSheet.create({
     logo:{
-        width:undefined,
-        height:100,
-        resizeMode:'contain',
-        alignItems:'center'
+       width:270,
+       height:170,
+       alignSelf:'center',
+       marginTop:32
     },
     containerTopTab: {
         flexDirection: 'row',
         marginHorizontal:spacing[10],
-        marginTop:spacing[7],
+        marginTop:16,
     },
     signUpContain:{
         flex:1,
@@ -32,8 +32,8 @@ export default StyleSheet.create({
         marginHorizontal:spacing[4]
     },
     containInput:{
-        marginHorizontal:spacing[9],
-        marginVertical:spacing[9]
+        marginHorizontal:56,
+        marginTop:24
     },
     password:{
         marginVertical:spacing[7]

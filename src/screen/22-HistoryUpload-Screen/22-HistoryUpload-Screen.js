@@ -97,7 +97,7 @@ const HistoryUpload25 = () => {
 
                     setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
 
-                    await restaurantsRef.orderBy('id').limit(limit).get().then(querySnapshot =>
+                    await restaurantsRef.orderBy('id').startAfter(lastDoc.data().id).limit(limit).get().then(querySnapshot =>
                         querySnapshot.forEach(doc => newRestaurants.push({ idItem: doc.id, ...doc.data() })))
 
                     setRestaurants(newRestaurants);
@@ -166,7 +166,7 @@ const HistoryUpload25 = () => {
                         onPress={() => navigation.goBack()}
                     />
                 </View>
-                <Image source={require('../../image/logo.png')} style={styles.ImageLogo} />
+                <Image source={require('../../image/logo2.png')} style={styles.ImageLogo} />
             </View>
             <View style={{ marginLeft: 16, marginTop: 16, flexDirection: 'row' }}>
                 <Text style={{

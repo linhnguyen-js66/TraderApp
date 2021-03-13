@@ -165,21 +165,21 @@ const UploadCart21 = () => {
     const getMoneyOfPost = async () => {
         let resultData = infomation
         let newMoney
-        for(let i = 0; i < resultData.length; i++){
-         newMoney = resultData[i].money - 5000
+        for (let i = 0; i < resultData.length; i++) {
+            newMoney = resultData[i].money - 5000
         }
-        if(newMoney > 0){
-          UploadItemsDataProductOfCompany()
-          await firestore().collection("UserInformation").doc(uid).update({
-            money:newMoney
-        })  
+        if (newMoney > 0) {
+            UploadItemsDataProductOfCompany()
+            await firestore().collection("UserInformation").doc(uid).update({
+                money: newMoney
+            })
         }
-        else{
-            Alert.alert("Thông báo","Bạn phải nạp thêm tiền để đăng bài")
+        else {
+            Alert.alert("Thông báo", "Bạn phải nạp thêm tiền để đăng bài")
             navigation.navigate(screen.AccountSetting)
         }
     }
- 
+
     useEffect(() => {
         getInformation()
     }, [])
@@ -271,7 +271,7 @@ const UploadCart21 = () => {
                 <View style={{ marginBottom: 100, marginHorizontal: 16, marginTop: 40 }}>
                     <ButtonForm title="Đăng bài"
                         onPress={() => {
-                            
+
                             getMoneyOfPost()
                         }}
                     />

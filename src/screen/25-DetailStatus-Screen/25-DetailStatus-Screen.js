@@ -1,32 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, Alert, TouchableOpacity, Image, FlatList, ActivityIndicator, RefreshControl } from "react-native"
+import { Text, View, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, RefreshControl } from "react-native"
 import styles from './style'
-import LikeAndComment from '../../components/LikeAndComment'
-import { HeaderCustom, Score } from '../../components/HeaderCustom'
-import ButtonForm from '../../components/ButtonForm'
-import { StackRouter, useNavigation } from '@react-navigation/native'
-import { screen } from '../../navigation/screen'
-import firestore from '@react-native-firebase/firestore'
-import auth from '@react-native-firebase/auth'
+import HeaderView from '../../components/Header'
 import { palette } from '../../theme'
+import firestore from '@react-native-firebase/firestore'
+import { useNavigation } from '@react-navigation/native'
+import { screen } from '../../navigation/screen'
+import auth from '@react-native-firebase/auth'
 import { Icon } from 'react-native-elements'
-const ListTheme = ({ data, onPress }) => {
-    const { id, image, name } = data
-    return (
-        <View style={{ flex: 1 }} >
-            <TouchableOpacity style={styles.containTheme}
-                onPress={onPress}
-                key={id}
-            >
-                <Image source={{ uri: image }} style={styles.imageIcon} />
-            </TouchableOpacity>
-            <Text style={styles.texttheme}>{name}</Text>
-        </View>
-    )
-}
+import LikeAndComment from '../../components/LikeAndComment'
 const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelete }) => {
     const { createdAt, image, idUser, status, id, idPost, idUserLike, like, theme, saved} = item
-
+    const navigation = useNavigation()
     const [isLike, setIsLike] = useState(like)
     const [isSave, setIsSave] = useState(saved)
     //Button Like Post
@@ -180,8 +165,9 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
                     idUserSaved: firestore.FieldValue.arrayRemove(userNotSave)
                 })
                 await firestore().collection('DataSavedPost').doc(id).delete()
+                navigation.navigate(screen.SavePostScreen23)
             } catch (error) {
-    
+                console.log(error)
             }
         }
     return (
@@ -294,64 +280,22 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
         </View>
     )
 }
-const Header = ({ onPress, onClick, DataTheme, DataPost}) => {
-    const navigation = useNavigation()
-
-    return (
-        <View>
-            <View style={styles.containHeader}>
-                <View>
-                    <Image source={require('../../image/talk.png')} style={styles.imageHeader} />
-                    <View style={styles.containTextHead}>
-                        <Text style={styles.text1}>Hỏi & đáp kinh doanh</Text>
-                        <Text style={styles.text2}>
-                            Bạn có thắc mắc cần giải đáp? Hãy chia sẻ cùng
-                            cộng động
-                       </Text>
-                    </View>
-                </View>
-
-
-                {/**Đặt câu hỏi */}
-                <View style={{ marginHorizontal: 80, marginBottom: 16 }}>
-                    <ButtonForm index={1} title="Đặt câu hỏi" onPress={onPress} />
-                </View>
-            </View>
-            {/**Theme*/}
-            <View style={{ marginTop: 16, marginHorizontal: 8 }}>
-                <FlatList
-                    data={DataTheme}
-                    keyExtractor={item => item.id}
-                    renderItem={({ item, index }) => <ListTheme data={item} onPress={() => navigation.navigate(screen.ThemeScreen, {
-                        idTheme: item.id
-                    })} />}
-                    numColumns={3}
-                />
-            </View>
-            {DataPost.length == 0 && <View style={{alignItems:'center',marginTop:32}}>
-                <Text style={{color:palette.grey}}>(Không có bài viết nào)</Text>
-            </View>}
-        </View>
-    )
-}
-
-const QuestionScreen11 = () => {
-
+const DetailStatus25 = ({route}) => {
+    const {idPost} = route.params
     const navigation = useNavigation()
     //GetDataStatus from firebase and lazyload
     const [DataPost, setDataPost] = useState([])
-    const [lastDoc, setLastDoc] = useState(null)
+
     const [isLoading, setIsLoading] = useState(false)
-    const [isMoreLoading, setIsMoreLoading] = useState(false);
-    let onEndReachedCalledDuringMomentum = false
+ 
     const getDataPost = async () => {
         setIsLoading(true)
-        let snapshot = await firestore().collection("DataStatus").orderBy('idPost').limit(3).get()
+        let snapshot = await firestore().collection("DataStatus").where('idPost','==',idPost).get()
         if (!snapshot.empty) {
             let listPost = []
 
-            setLastDoc(snapshot.docs[snapshot.docs.length - 1])
-            await firestore().collection("DataStatus").orderBy('idPost').limit(3).get().then(querySnapshot => {
+         
+            await firestore().collection("DataStatus").where('idPost','==',idPost).get().then(querySnapshot => {
                 querySnapshot.forEach(doc => {
                     listPost.push({ id: doc.id, ...doc.data(), like: false, saved:false })
                     let resultData = listPost
@@ -377,73 +321,17 @@ const QuestionScreen11 = () => {
 
             setDataPost(listPost)
         }
-        else {
-            setLastDoc(null)
-        }
+        
         setIsLoading(false)
     }
-    const getMoreDataPost = async () => {
-        if (lastDoc) {
-            setIsMoreLoading(true)
 
-            setTimeout(async () => {
-                let snapshot = await firestore().collection("DataStatus").orderBy('idPost').limit(3).startAfter(lastDoc.data().idPost).get()
-                if (!snapshot.empty) {
-                    let listPost = DataPost
-
-                    setLastDoc(snapshot.docs[snapshot.docs.length - 1])
-                    await firestore().collection("DataStatus").orderBy('idPost').limit(3).startAfter(lastDoc.data().idPost).get().then(querySnapshot => {
-                        querySnapshot.forEach(doc => {
-                            listPost.push({ id: doc.id, ...doc.data(), like: false,saved:false })
-                            let resultData = listPost
-                            for (let data = 0; data < resultData.length; data++) {
-                                let amountUser = resultData[data].idUserLike
-                                for (let user = 0; user < amountUser.length; user++) {
-                                    if (amountUser[user].uid == uid) {
-                                        resultData[data].like = true
-                                    }
-                                }
-                            }
-                            //Save Post
-                            for (let data = 0; data < resultData.length; data++) {
-                                let amountUser = resultData[data].idUserSaved
-                                for (let user = 0; user < amountUser.length; user++) {
-                                    if (amountUser[user].uid == uid) {
-                                        resultData[data].saved = true
-                                    }
-                                }
-                            }
-                        })
-                    })
-
-
-                    setDataPost(listPost)
-                    if (snapshot.docs.length < 3) setLastDoc(null)
-                }
-                else {
-                    setLastDoc(null)
-                }
-                setIsMoreLoading(false)
-            }, 1000)
-        }
-        onEndReachedCalledDuringMomentum = true
-    }
     const onRefresh = () => {
         setTimeout(() => {
             getDataPost()
         }, 1000)
     }
 
-    const renderFooter = () => {
-        if (!isMoreLoading) return true
-        return (
-            <ActivityIndicator
-                size='large'
-                color={palette.buttonColor}
-                style={{ marginBottom: 16 }}
-            />
-        )
-    }
+
     //GetDataUser from firebase 
 
     const [DataUser, setDataUser] = useState([])
@@ -461,15 +349,7 @@ const QuestionScreen11 = () => {
     //id User
 
     let uid = auth().currentUser.uid
-    //sort
-    function byDate(a, b) {
-        //by month and then by day
-        let d1 = new Date(a.createdAt); // 1993-02-15T00:00:00Z =>   1993-02-14T20:00:00EST
-        let d2 = new Date(b.createdAt);
-
-        return d2 - d1
-
-    }
+  
     //Datatheme
     const [DataTheme, setDataTheme] = useState([])
     const getDataTheme = async () => {
@@ -485,19 +365,25 @@ const QuestionScreen11 = () => {
         setDataPost(filterData)
         await firestore().collection('DataStatus').doc(id).delete()
         await firestore().collection('DataSavedPost').doc(id).delete()
+        navigation.navigate(screen.DetailSavePost24)
     }
     return (
-        <View style={{ flex: 1, backgroundColor: palette.white }} >
-            {/**Header*/}
-            <View style={styles.contain}>
-                <View style={styles.header}>
-                    <HeaderCustom uid={uid} />
-                    <Score />
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={styles.header}>
+                <View style={{ marginTop: 4 }}>
+                    <HeaderView name="chevron-left" type="entypo"
+                        onPress={() => navigation.goBack()}
+                    />
                 </View>
+                <View style={styles.containTextCategory}>
+                    <Text style={styles.textCategory}>Bài viết</Text>
+                </View>
+
             </View>
-            <View style={{ marginBottom: 64 }}>
-                <FlatList
-                    data={DataPost.sort(byDate)}
+            {/**End */}
+            <View>
+            <FlatList
+                    data={DataPost}
                     keyExtractor={item => item.id}
                     renderItem={({ item, index }) => <ListPost item={item}
                         onClick={() => navigation.navigate(screen.DetailComment, {
@@ -510,20 +396,8 @@ const QuestionScreen11 = () => {
                         clickDelete={()=>onClickDeletePost(item.idPost,item.id)}
                     />}
 
-                    ListHeaderComponent={() => <Header
-                        DataPost = {DataPost}
-                        onPress={() => navigation.navigate(screen.StatusScreen, {
-                            idType: ""
-                        })}
-                        DataTheme={DataTheme}
-                    />}
+               
                     onEndReachedThreshold={1}
-
-                    onEndReached={() => {
-                        if (!onEndReachedCalledDuringMomentum && !isMoreLoading) {
-                            getMoreDataPost()
-                        }
-                    }}
                     refreshControl={
                         <RefreshControl
                             refreshing={isLoading}
@@ -532,14 +406,12 @@ const QuestionScreen11 = () => {
                             }}
                         />
                     }
-                    onMomentumScrollBegin={() => onEndReachedCalledDuringMomentum = false}
-                    ListFooterComponent={renderFooter}
+             
+                
                 />
             </View>
         </View>
-
-
-
     )
 }
-export default QuestionScreen11
+
+export default DetailStatus25

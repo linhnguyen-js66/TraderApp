@@ -7,43 +7,7 @@ import { HeaderCustom, Score } from '../../components/HeaderCustom'
 import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
 import { fontSize, palette } from '../../theme'
-const Data = [
-    {
-        id: 1,
-        title: "Tin tức về thị trường ngày 31/12/2020",
-        image: "../../image/traidat.jpg",
-        time: '31/12/2020',
-        description: "Đây là vài dòng sơ qua về bài viết này mỗi bài báo chỉ được review còn nhiều lắm muốn biết phải mua báo mà đọc không thì click vào"
-    },
-    {
-        id: 2,
-        title: 'Tin tức về thị trường ngày 01/01/2021 xem đi',
-        image: "../../image/traidat.jpg",
-        time: '01/01/2021',
-        description: "Đây là vài dòng sơ qua về bài viết này mỗi bài báo chỉ được review còn nhiều lắm muốn biết phải mua báo mà đọc không thì click vào"
-    },
-    {
-        id: 3,
-        title: 'Tin tức về chứng khoán Hot nhất',
-        image: "../../image/traidat.jpg",
-        time: '23/12/2020',
-        description: "Đây là vài dòng sơ qua về bài viết này mỗi bài báo chỉ được review còn nhiều lắm muốn biết phải mua báo mà đọc không thì click vào"
-    }
-    // {
-    //     id: 4,
-    //     title: 'Tin tức về thị trường ngày 01/01/2021 xem đi',
-    //     image: "../../image/traidat.jpg",
-    //     time: '01/01/2021',
-    //     description: "Đây là vài dòng sơ qua về bài viết này mỗi bài báo chỉ được review còn nhiều lắm muốn biết phải mua báo mà đọc không thì click vào"
-    // },
-    // {
-    //     id: 5,
-    //     title: 'Tin tức về thị trường ngày 01/01/2021 xem đi',
-    //     image: "../../image/traidat.jpg",
-    //     time: '01/01/2021',
-    //     description: "Đây là vài dòng sơ qua về bài viết này mỗi bài báo chỉ được review còn nhiều lắm muốn biết phải mua báo mà đọc không thì click vào"
-    // }
-]
+
 const ListHorizontal = ({ data, onPress, theme }) => {
     const { name, image, idField, index } = data
     return (
@@ -127,12 +91,12 @@ const NewsScreen = () => {
         let resultOne = resultData.filter(item => item.idField == 1)
         let resultTwo = resultData.filter(item => item.idField == 2)
         let resultThree = resultData.filter(item => item.idField == 3)
-        let resultFive = resultData.filter(item => item.idField == 5)
+        let resultFour = resultData.filter(item => item.idField == 4)
         let lastResult = [
             resultOne.sort(byDate)[0],
             resultTwo.sort(byDate)[0],
             resultThree.sort(byDate)[0],
-            resultFive.sort(byDate)[0]
+            resultFour.sort(byDate)[0],           
         ]
         setDataNewsHorizontal(lastResult)
     }
@@ -235,7 +199,7 @@ const NewsScreen = () => {
                 renderItem={({ item, index }) => <List3 data={item}
                     onPress={() => navigation.navigate(screen.DetailNewScreen)}
                 />}
-                // ListHeaderComponent={() => <HeaderTop data={dataNewsHorizontal} dataTheme={DataTheme} />}
+                ListHeaderComponent={() => <HeaderTop data={dataNewsHorizontal} dataTheme={DataTheme} />}
                 onEndReachedThreshold={1}
 
                 onEndReached={() => {
