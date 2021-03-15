@@ -9,9 +9,12 @@ import auth from '@react-native-firebase/auth'
 import { fontSize, palette } from '../../theme'
 
 const ListHorizontal = ({ data, onPress, theme }) => {
-    const { name, image, idField, index } = data
+    const navigation = useNavigation()
+    const { name, image, idField, index, id} = data
     return (
-        <TouchableOpacity style={{ marginLeft: 16, marginBottom: 16 }}>
+        <TouchableOpacity style={{ marginLeft: 16, marginBottom: 16 }} onPress={()=>navigation.navigate(screen.DetailNewScreen,{
+            idPost: id
+        })}>
             {theme.map(item => {
                 if (item.id == idField) {
                     return <View style={styles.containTheme} key={item.id}>
@@ -65,7 +68,7 @@ const HeaderTop = ({ data, dataTheme }) => {
                 data={data}
                 horizontal={true}
                 // keyExtractor={item => item.id}
-                renderItem={({ item, index }) => <ListHorizontal data={item} theme={dataTheme} index={index} />}
+                renderItem={({ item, index }) => <ListHorizontal data={item} theme={dataTheme} index={index}/>}
             />
         </View>
     )
@@ -197,7 +200,9 @@ const NewsScreen = () => {
             <FlatList
                 data={DataPost}
                 renderItem={({ item, index }) => <List3 data={item}
-                    onPress={() => navigation.navigate(screen.DetailNewScreen)}
+                    onPress={() => navigation.navigate(screen.DetailNewScreen,{
+                        idPost:item.id
+                    })}
                 />}
                 ListHeaderComponent={() => <HeaderTop data={dataNewsHorizontal} dataTheme={DataTheme} />}
                 onEndReachedThreshold={1}

@@ -1,64 +1,164 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, ScrollView, TouchableOpacity, Image, FlatList } from "react-native"
+import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, RefreshControl } from "react-native"
 import styles from './style'
 import HeaderView from '../../components/Header'
 import { Icon } from 'react-native-elements'
-const DetailNewsScreen = () => {
+import firestore from '@react-native-firebase/firestore'
+import auth from '@react-native-firebase/auth'
+const News = ({ item,idUserDislike, idUserLike}) => {
+    const { id, like, dislike, image, name, description, dating, timing, idPost } = item
+    const [isLike,setIsLike] = useState(like)
+    const [isDislike, setIsDislike] = useState(dislike)
+    const [amountLike,setAmountLike] = useState(idUserLike)
+    const [amountDislike,setAmountDislike] = useState(idUserDislike)
+    //Like
+    let uid = auth().currentUser.uid
+    const userLikeNews = () => {
+         setIsLike(true)
+         setIsDislike(false)
+         updateUserLike()
+    }
+    const userUnLike = () => {
+        setIsLike(false)
+    }
+    const updateUserLike = async () => {
+       try{
+           let newUser = {
+               uid:uid
+           }
+           await firestore().collection("DataNews").doc(idPost).update({
+            idUserLike: firestore.FieldValue.arrayUnion(newUser)
+           }) 
+           let resultAmount = []
+           let findIndex = resultAmount.findIndex(item => item.uid == uid)
+           if(findIndex < 0){
+               resultAmount.push(newUser)
+           }
+           setAmountLike(resultAmount)
+       }catch(err){
+           console.log(err)
+       }
+    }
+    const updateUserUnlike = async () => {
+
+    }
+    //Dislike
+    const userDislike = () => {
+        setIsDislike(true)
+        setIsLike(false)
+    }
+    const userNotDislike = () => {
+        setIsDislike(false)
+    }
+    useEffect(()=>{
+        setIsDislike(dislike ? true : false)
+        setIsLike(like ? true : false)
+    },[])
     return (
-        <ScrollView>
-            <View style={styles.header}>
-                <View style={{ marginTop: 4 }}>
-                <HeaderView name="chevron-left" type="entypo" />
-                </View>
-                <Image source={require('../../image/logo.png')} style={styles.ImageLogo} />
-            </View>
-            {/* HeadNews */}
+        <View key={id}>
             <View style={{ flex: 1 }}>
-                <Image source={require('../../image/sing.jpg')} style={styles.imageCover} />
+                <Image source={{ uri: image }} style={styles.imageCover} />
                 <View style={styles.headNews}>
-                    <Image source={require('../../image/logo2.png')} style={styles.imageLogo2} />
+                    <View style={{ flexDirection: 'row' }}>
+                        <Icon type="font-awesome" name="clock-o" size={20} color="#5C5B5B" />
+                        <Text style={styles.datetime}>{timing}</Text>
+                    </View>
                     <View style={styles.calendar}>
                         <Icon type="font-awesome" name="calendar" size={20} color="#5C5B5B" />
-                        <Text style={styles.datetime}>31/12/2020</Text>
+                        <Text style={styles.datetime}>{dating}</Text>
                     </View>
                 </View>
             </View>
             {/* TitleNews */}
             <View style={styles.containtitleNews}>
-                <Text style={styles.titleNews}>Tin tức giao dịch ngày 31/12/2020</Text>
+                <Text style={styles.titleNews}>{name}</Text>
             </View>
             {/* ButtonLikeDislike */}
             <View style={styles.buttonLikeAndDis}>
-                <TouchableOpacity style={styles.buttonLike}>
-                    <Icon name="like1" type="antdesign" color="#5C5B5B" />
-                    <Text style={styles.countLike}>1</Text>
+                <TouchableOpacity style={styles.buttonLike} onPress={()=>{
+                    isLike ? userUnLike() : userLikeNews()
+                }}>
+                    <Icon name="like1" type="antdesign" color={isLike ? "#00aaff":"#5C5B5B" } />
+                    <Text style={styles.countLike}></Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.ButtonDislike}>
-                    <Icon name="dislike1" type="antdesign" color="#5C5B5B" />
-                    <Text style={styles.countLike}>Không hay</Text>
+                <TouchableOpacity style={styles.ButtonDislike}
+                   onPress = {() => {
+                       isDislike ? userNotDislike() : userDislike()
+                   }}
+                >
+                    <Icon name="dislike1" type="antdesign" color={isDislike ? "#00aaff":"#5C5B5B" } />
+                    <Text style={styles.countLike}></Text>
                 </TouchableOpacity>
             </View>
             {/* WriteNews */}
             <View style={styles.WriteNews}>
                 <Text style={styles.WriteNewsTitle}>
-                    Chào mừng bạn đến với nền tảng đào tạo và thực
-                    hành đầu tư tài chính. Sau đây là một số kênh đầu tư
-                    mà bạn đã từng nghe tới hoặc đã từng đầu tư vào.
-                    Hãy cho chúng tôi biết những kênh đầu tư ưa thích
-                    của bạn:{"\n"}
-                    Kết thúc năm 2020 cũng là lúc thế giới và Việt Nam đã trải qua hơn 
-                    300 ngày đối mặt với vô số thách thức. Trong cuộc chiến chống Covid-19,
-                     Việt Nam nổi lên như một kỳ tích khi là một trong số ít nước 
-                     kiểm soát thành công dịch bệnh nhanh chóng, quay về các hoạt động kinh tế - 
-                     xã hội bình thường.
-                    Nhiều tổ chức trong nước và quốc tế đã đưa ra các dự báo tăng trưởng 
-                    tích cực đối với Việt Nam. Điển hình, Ngân hàng Phát triển châu Á 
-                    (ADB) đã nâng mức dự báo tăng trưởng kinh tế Việt Nam lên mức 2,3% 
-                    trong năm 2020. Viện Nghiên cứu Kinh tế và Chính sách (VEPR) dự báo
-                     Việt Nam có thể đạt mức tăng trưởng cả năm 2,8%.
+                    {description}
                 </Text>
             </View>
-        </ScrollView>
+        </View>
+    )
+}
+const DetailNewsScreen = ({ route }) => {
+    const { idPost } = route.params
+    const [isLoading, setIsLoading] = useState(false)
+    const [DataNews, setDataNews] = useState([])
+    const getDataNews = async () => {
+        setIsLoading(true)
+        let snapshot = await firestore().collection("DataNews").where('id','==',idPost).get()
+        if (!snapshot.empty) {
+            let listPost = []         
+            await firestore().collection("DataNews").where('id','==',idPost).get().then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    if(doc.data().idUserLike == undefined){
+                        listPost.push({idNews:doc.id,...doc.data(),like:false,idUserLike:[]})
+                    }else{
+                        listPost.push({idNews:doc.id,...doc.data(),like:false})
+                        
+                    }
+                })
+            })
+
+            setDataNews(listPost)
+        }
+        
+        setIsLoading(false)
+    }
+    const onRefresh = () => {
+        setTimeout(() => {
+            getDataNews()
+        }, 1000)
+    }
+    useEffect(() => {
+        getDataNews()
+    }, [])
+    return (
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={styles.header}>
+                <View style={{ marginTop: 4 }}>
+                    <HeaderView name="chevron-left" type="entypo" />
+                </View>
+                <Image source={require('../../image/logo2.png')} style={styles.ImageLogo} />
+            </View>
+            {/* HeadNews */}
+            <FlatList
+                data={DataNews}
+                keyExtractor={item => item.id}
+                renderItem={({ item, index }) => <News item={item}
+                    idUserDislike={item.idUserDislike}
+                    idUserLike = {item.idUserLike}
+                />}
+                onEndReachedThreshold={1}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isLoading}
+                        onRefresh={() => {
+                            onRefresh()
+                        }}
+                    />
+                }
+            />
+        </View>
     )
 }
 export default DetailNewsScreen

@@ -24,9 +24,17 @@ const ListProduct = ({ item, onPress, index }) => {
         </TouchableOpacity>
     )
 }
-const SavePostScreen23 = () => {
+const SavePostScreen23 = ({navigation}) => {
     let uid = auth().currentUser.uid
-    const navigation = useNavigation()
+    const [Refresh,setRefresh] = useState([])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+           setRefresh([])
+        });
+        return unsubscribe;
+    }, [navigation])
+
+    // const navigation = useNavigation()
     const [DataSave, setDataSave] = useState([])
     const [DataPost, setDataPost] = useState([])
     const DataPostSaved = async () => {
@@ -47,7 +55,8 @@ const SavePostScreen23 = () => {
 
     useEffect(() => {
         DataPostSaved()
-    }, [])
+   
+    }, [Refresh])
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             {/**Header */}

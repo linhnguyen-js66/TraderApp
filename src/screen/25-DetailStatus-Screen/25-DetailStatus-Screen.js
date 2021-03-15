@@ -97,24 +97,7 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
 
     const [open, setOpen] = useState(false) 
         //Save Post 
-        const onClickSave = () => {
-            Alert.alert(
-                'Thông báo',
-                'Bạn có chắc muốn lưu bài viết này ?',
-                [
-                    {
-                        text:'Hủy'
-                    },
-                    {
-                        text:'Lưu lại',
-                        onPress:()=> {
-                            setIsSave(true)
-                            uploadUserSavePost()
-                        }
-                    }
-                ]
-            )
-        }
+
         const onClickDeleteSave = () => {
             Alert.alert(
                 'Thông báo',
@@ -128,33 +111,11 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
                         onPress:()=> {
                             setIsSave(false)
                             deleteUserSavePost()
+                            navigation.navigate(screen.SavePostScreen23)
                         }
                     }
                 ]
             )
-        }
-        const uploadUserSavePost = async () => {
-            try {
-                let newUser = {
-                    uid: uid
-                }
-                
-                // idUserSaved.push({uid:uid})
-                await firestore().collection('DataStatus').doc(id).update({
-                    idUserSaved: firestore.FieldValue.arrayUnion(newUser)
-                })
-                await firestore().collection('DataSavedPost').doc(id).set({
-                    ...item,
-                    idType: 2,
-                    user: uid,
-                    id:id
-                })
-                await firestore().collection('DataSavedPost').doc(id).update({
-                    idUserSaved: firestore.FieldValue.arrayUnion(newUser)
-                })
-            } catch (error) {
-                console.log(error)
-            }
         }
         const deleteUserSavePost = async () => {
             try {
@@ -256,7 +217,7 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
                     <LikeAndComment name={isSave ?"md-paper-plane":"md-paper-plane-outline"} type="ionicon" 
                          onPress={() => {
 
-                            isSave ? onClickDeleteSave() : onClickSave()
+                            isSave ? onClickDeleteSave() : null
                         }}
                     />
                 </View>

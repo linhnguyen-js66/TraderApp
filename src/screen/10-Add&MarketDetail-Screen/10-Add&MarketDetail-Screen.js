@@ -70,11 +70,11 @@ const DetailPost = ({ item }) => {
             'Bạn có chắc muốn lưu bài viết này ?',
             [
                 {
-                    text:'Hủy'
+                    text: 'Hủy'
                 },
                 {
-                    text:'Lưu lại',
-                    onPress:()=> {
+                    text: 'Lưu lại',
+                    onPress: () => {
                         setIsSave(true)
                         uploadUserSavePost()
                     }
@@ -88,11 +88,11 @@ const DetailPost = ({ item }) => {
             'Bạn có chắc muốn bỏ lưu bài viết này ?',
             [
                 {
-                    text:'Hủy'
+                    text: 'Hủy'
                 },
                 {
-                    text:'Bỏ lưu',
-                    onPress:()=> {
+                    text: 'Bỏ lưu',
+                    onPress: () => {
                         setIsSave(false)
                         deleteUserSavePost()
                     }
@@ -120,7 +120,7 @@ const DetailPost = ({ item }) => {
                 ...item,
                 idType: 1,
                 user: uid,
-                idPost:idPost
+                idPost: idPost
             })
             await firestore().collection('DataSavedPost').doc(idPost).update({
                 idUserSaved: firestore.FieldValue.arrayUnion(newUser)
@@ -149,11 +149,19 @@ const DetailPost = ({ item }) => {
 
         }
     }
+    //Refresh Data
+    const [Refresh, setRefresh] = useState([])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            setRefresh([])
+        });
+        return unsubscribe;
+    }, [navigation])
     useEffect(() => {
         setIsLike(like ? true : false)
         setIsSave(saved ? true : false)
-    
-    }, [])
+
+    }, [Refresh])
 
     return (
         <View>
@@ -180,8 +188,8 @@ const DetailPost = ({ item }) => {
                     />
                 </View>
                 <View style={{ marginLeft: 16 }}>
-                    <LikeAndComment name={isSave ?"md-paper-plane":"md-paper-plane-outline"} type="ionicon" 
-                         onPress={() => {
+                    <LikeAndComment name={isSave ? "md-paper-plane" : "md-paper-plane-outline"} type="ionicon"
+                        onPress={() => {
 
                             isSave ? onClickDeleteSave() : onClickSave()
                         }}

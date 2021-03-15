@@ -11,7 +11,6 @@ export default StyleSheet.create({
     header:{
         flexDirection:'row',
         borderBottomWidth:0.4,
-        flex:1
     },
     imageCover:{
         flex:1,
@@ -20,8 +19,8 @@ export default StyleSheet.create({
         height:236
     },
     imageLogo2:{
-        width:120,
-        height:40,
+        width:135,
+      height:30
     },
     calendar:{
         flex:1,flexDirection:'row',justifyContent:'flex-end'

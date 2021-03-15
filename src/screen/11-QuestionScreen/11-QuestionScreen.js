@@ -10,7 +10,7 @@ import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
 import { palette } from '../../theme'
 import { Icon } from 'react-native-elements'
-const ListTheme = ({ data, onPress }) => {
+const ListTheme = ({ data, onPress}) => {
     const { id, image, name } = data
     return (
         <View style={{ flex: 1 }} >
@@ -24,8 +24,8 @@ const ListTheme = ({ data, onPress }) => {
         </View>
     )
 }
-const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelete }) => {
-    const { createdAt, image, idUser, status, id, idPost, idUserLike, like, theme, saved} = item
+const ListPost = ({ item, onClick, user, Comment, snapshot, datatheme, clickDelete}) => {
+    const { createdAt, image, idUser, status, id, idPost, idUserLike, like, theme, saved } = item
 
     const [isLike, setIsLike] = useState(like)
     const [isSave, setIsSave] = useState(saved)
@@ -70,11 +70,22 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
         result = snapshot.docs.filter(item => item.data().idPost == idPost)
         setDataComment(result)
     }
+    const navigation = useNavigation()
+    //Refresh Data
+    const [Refresh,setRefresh] = useState([])
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+           setRefresh([])
+           
+        });
+        return unsubscribe;
+    }, [navigation])
+    //////////
     useEffect(() => {
         setIsLike(like ? true : false)
         getDataComment()
         setIsSave(saved ? true : false)
-    }, [])
+    }, [Refresh])
     const onClickLike = () => {
         setIsLike(true)
         addLikes(idPost, uid)
@@ -110,80 +121,80 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
         }
     }
 
-    const [open, setOpen] = useState(false) 
-        //Save Post 
-        const onClickSave = () => {
-            Alert.alert(
-                'Thông báo',
-                'Bạn có chắc muốn lưu bài viết này ?',
-                [
-                    {
-                        text:'Hủy'
-                    },
-                    {
-                        text:'Lưu lại',
-                        onPress:()=> {
-                            setIsSave(true)
-                            uploadUserSavePost()
-                        }
+    const [open, setOpen] = useState(false)
+    //Save Post 
+    const onClickSave = () => {
+        Alert.alert(
+            'Thông báo',
+            'Bạn có chắc muốn lưu bài viết này ?',
+            [
+                {
+                    text: 'Hủy'
+                },
+                {
+                    text: 'Lưu lại',
+                    onPress: () => {
+                        setIsSave(true)
+                        uploadUserSavePost()
                     }
-                ]
-            )
-        }
-        const onClickDeleteSave = () => {
-            Alert.alert(
-                'Thông báo',
-                'Bạn có chắc muốn bỏ lưu bài viết này ?',
-                [
-                    {
-                        text:'Hủy'
-                    },
-                    {
-                        text:'Bỏ lưu',
-                        onPress:()=> {
-                            setIsSave(false)
-                            deleteUserSavePost()
-                        }
+                }
+            ]
+        )
+    }
+    const onClickDeleteSave = () => {
+        Alert.alert(
+            'Thông báo',
+            'Bạn có chắc muốn bỏ lưu bài viết này ?',
+            [
+                {
+                    text: 'Hủy'
+                },
+                {
+                    text: 'Bỏ lưu',
+                    onPress: () => {
+                        setIsSave(false)
+                        deleteUserSavePost()
                     }
-                ]
-            )
-        }
-        const uploadUserSavePost = async () => {
-            try {
-                let newUser = {
-                    uid: uid
                 }
-                
-                // idUserSaved.push({uid:uid})
-                await firestore().collection('DataStatus').doc(id).update({
-                    idUserSaved: firestore.FieldValue.arrayUnion(newUser)
-                })
-                await firestore().collection('DataSavedPost').doc(id).set({
-                    ...item,
-                    idType: 2,
-                    user: uid,
-                    id:id
-                })
-                await firestore().collection('DataSavedPost').doc(id).update({
-                    idUserSaved: firestore.FieldValue.arrayUnion(newUser)
-                })
-            } catch (error) {
-                console.log(error)
+            ]
+        )
+    }
+    const uploadUserSavePost = async () => {
+        try {
+            let newUser = {
+                uid: uid
             }
+
+            // idUserSaved.push({uid:uid})
+            await firestore().collection('DataStatus').doc(id).update({
+                idUserSaved: firestore.FieldValue.arrayUnion(newUser)
+            })
+            await firestore().collection('DataSavedPost').doc(id).set({
+                ...item,
+                idType: 2,
+                user: uid,
+                id: id
+            })
+            await firestore().collection('DataSavedPost').doc(id).update({
+                idUserSaved: firestore.FieldValue.arrayUnion(newUser)
+            })
+        } catch (error) {
+            console.log(error)
         }
-        const deleteUserSavePost = async () => {
-            try {
-                let userNotSave = {
-                    uid: uid
-                }
-                await firestore().collection('DataStatus').doc(id).update({
-                    idUserSaved: firestore.FieldValue.arrayRemove(userNotSave)
-                })
-                await firestore().collection('DataSavedPost').doc(id).delete()
-            } catch (error) {
-    
+    }
+    const deleteUserSavePost = async () => {
+        try {
+            let userNotSave = {
+                uid: uid
             }
+            await firestore().collection('DataStatus').doc(id).update({
+                idUserSaved: firestore.FieldValue.arrayRemove(userNotSave)
+            })
+            await firestore().collection('DataSavedPost').doc(id).delete()
+        } catch (error) {
+
         }
+    }
     return (
         <View style={{ marginTop: 16 }} >
             {/**Avatar và tên người dùng */}
@@ -195,7 +206,7 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
                                 <Image source={{ uri: item.ava }} style={styles.imgAva} />
                             </View>
                             <View style={styles.containUserName}>
-                                <View style={{flexDirection:'row'}}>
+                                <View style={{ flexDirection: 'row' }}>
                                     <Text style={styles.userName}>{item.name}</Text>
                                     {idUser == uid ?
                                         <View style={styles.containDot}>
@@ -203,11 +214,11 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
                                                 <Icon name="dots-three-horizontal" type="entypo" />
                                             </TouchableOpacity>
                                             {open ? <TouchableOpacity style={styles.containDelete}
-                                             onPress={clickDelete}
+                                                onPress={clickDelete}
                                             >
                                                 <Text style={styles.titleDelete}>Xóa bài viết</Text>
-                                                <View style={{paddingRight:12,paddingVertical:8}}>
-                                                   <Icon name="delete" type="antdesign" color="tomato"/> 
+                                                <View style={{ paddingRight: 12, paddingVertical: 8 }}>
+                                                    <Icon name="delete" type="antdesign" color="tomato" />
                                                 </View>
                                             </TouchableOpacity> : null}
                                         </View> :
@@ -267,8 +278,8 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
                     />
                 </View>
                 <View style={{ marginLeft: 16 }}>
-                    <LikeAndComment name={isSave ?"md-paper-plane":"md-paper-plane-outline"} type="ionicon" 
-                         onPress={() => {
+                    <LikeAndComment name={isSave ? "md-paper-plane" : "md-paper-plane-outline"} type="ionicon"
+                        onPress={() => {
 
                             isSave ? onClickDeleteSave() : onClickSave()
                         }}
@@ -294,7 +305,7 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
         </View>
     )
 }
-const Header = ({ onPress, onClick, DataTheme, DataPost}) => {
+const Header = ({ onPress, onClick, DataTheme, DataPost }) => {
     const navigation = useNavigation()
 
     return (
@@ -328,16 +339,13 @@ const Header = ({ onPress, onClick, DataTheme, DataPost}) => {
                     numColumns={3}
                 />
             </View>
-            {DataPost.length == 0 && <View style={{alignItems:'center',marginTop:32}}>
-                <Text style={{color:palette.grey}}>(Không có bài viết nào)</Text>
+            {DataPost.length == 0 && <View style={{ alignItems: 'center', marginTop: 32 }}>
+                <Text style={{ color: palette.grey }}>(Không có bài viết nào)</Text>
             </View>}
         </View>
     )
 }
-
-const QuestionScreen11 = () => {
-
-    const navigation = useNavigation()
+const QuestionScreen11 = ({ navigation }) => {
     //GetDataStatus from firebase and lazyload
     const [DataPost, setDataPost] = useState([])
     const [lastDoc, setLastDoc] = useState(null)
@@ -349,11 +357,10 @@ const QuestionScreen11 = () => {
         let snapshot = await firestore().collection("DataStatus").orderBy('idPost').limit(3).get()
         if (!snapshot.empty) {
             let listPost = []
-
             setLastDoc(snapshot.docs[snapshot.docs.length - 1])
             await firestore().collection("DataStatus").orderBy('idPost').limit(3).get().then(querySnapshot => {
                 querySnapshot.forEach(doc => {
-                    listPost.push({ id: doc.id, ...doc.data(), like: false, saved:false })
+                    listPost.push({ id: doc.id, ...doc.data(), like: false, saved: false })
                     let resultData = listPost
                     for (let data = 0; data < resultData.length; data++) {
                         let amountUser = resultData[data].idUserLike
@@ -363,8 +370,8 @@ const QuestionScreen11 = () => {
                             }
                         }
                     }
-                      //Save Post
-                      for (let data = 0; data < resultData.length; data++) {
+                    //Save Post
+                    for (let data = 0; data < resultData.length; data++) {
                         let amountUser = resultData[data].idUserSaved
                         for (let user = 0; user < amountUser.length; user++) {
                             if (amountUser[user].uid == uid) {
@@ -394,7 +401,7 @@ const QuestionScreen11 = () => {
                     setLastDoc(snapshot.docs[snapshot.docs.length - 1])
                     await firestore().collection("DataStatus").orderBy('idPost').limit(3).startAfter(lastDoc.data().idPost).get().then(querySnapshot => {
                         querySnapshot.forEach(doc => {
-                            listPost.push({ id: doc.id, ...doc.data(), like: false,saved:false })
+                            listPost.push({ id: doc.id, ...doc.data(), like: false, saved: false })
                             let resultData = listPost
                             for (let data = 0; data < resultData.length; data++) {
                                 let amountUser = resultData[data].idUserLike
@@ -453,13 +460,15 @@ const QuestionScreen11 = () => {
         dataUser.docs.map(item => resultData.push(item.data()))
         setDataUser(resultData)
     }
+    //Refresh Data
+    const [Refresh, setRefresh] = useState([])
     useEffect(() => {
         getDataPost()
         getDataUserInfomation()
         getDataTheme()
+    
     }, [])
     //id User
-
     let uid = auth().currentUser.uid
     //sort
     function byDate(a, b) {
@@ -479,13 +488,14 @@ const QuestionScreen11 = () => {
         setDataTheme(result)
     }
     //Delete Post 
-    const onClickDeletePost = async (idPost,id) => {
+    const onClickDeletePost = async (idPost, id) => {
         let resultData = DataPost
         let filterData = resultData.filter(item => item.idPost !== idPost)
         setDataPost(filterData)
         await firestore().collection('DataStatus').doc(id).delete()
         await firestore().collection('DataSavedPost').doc(id).delete()
     }
+
     return (
         <View style={{ flex: 1, backgroundColor: palette.white }} >
             {/**Header*/}
@@ -507,11 +517,11 @@ const QuestionScreen11 = () => {
                         user={DataUser}
                         snapshot={DataPost}
                         datatheme={DataTheme}
-                        clickDelete={()=>onClickDeletePost(item.idPost,item.id)}
+                        clickDelete={() => onClickDeletePost(item.idPost, item.id)}
                     />}
 
                     ListHeaderComponent={() => <Header
-                        DataPost = {DataPost}
+                        DataPost={DataPost}
                         onPress={() => navigation.navigate(screen.StatusScreen, {
                             idType: ""
                         })}
