@@ -127,7 +127,8 @@ const UploadCart21 = () => {
                     price: price,
                     dateof: endTime,
                     dateon: `${nam}/${thang}/${ngay}`,
-                    type: colorType
+                    type: colorType,
+                    idUserReceive:colorType == 3 ? [] : null
                 }
                 if (colorType == 1) {
                     await firestore().collection("DataProduct").doc(itemID).set(newItem)
@@ -161,7 +162,7 @@ const UploadCart21 = () => {
         )
         setInformation(result)
     }
-
+    
     const getMoneyOfPost = async () => {
         let resultData = infomation
         let newMoney

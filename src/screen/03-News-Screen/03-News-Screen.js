@@ -43,7 +43,7 @@ const List3 = ({ data, onPress }) => {
     const { image, name, description, dating, id } = data
     return (
         <TouchableOpacity style={{ flexDirection: 'row', marginBottom: 16, marginHorizontal: 16 }}
-            onPres={onPress}
+            onPress={onPress}
             key={id}
         >
             <View style={{ height: 80 }}>
@@ -67,7 +67,7 @@ const HeaderTop = ({ data, dataTheme }) => {
             <FlatList
                 data={data}
                 horizontal={true}
-                // keyExtractor={item => item.id}
+                keyExtractor={item => item.id}
                 renderItem={({ item, index }) => <ListHorizontal data={item} theme={dataTheme} index={index}/>}
             />
         </View>
@@ -79,8 +79,8 @@ const NewsScreen = () => {
     const [dataNewsHorizontal, setDataNewsHorizontal] = useState([])
     //sort
     function byDate(a, b) {
-        //by month and then by day
-        let d1 = new Date(a.createdAt); // 1993-02-15T00:00:00Z =>   1993-02-14T20:00:00EST
+      
+        let d1 = new Date(a.createdAt); 
         let d2 = new Date(b.createdAt);
 
         return d2 - d1
@@ -102,6 +102,7 @@ const NewsScreen = () => {
             resultFour.sort(byDate)[0],           
         ]
         setDataNewsHorizontal(lastResult)
+        console.log(dataNewsHorizontal)
     }
     //get DataTheme 
     const [DataTheme, setDataTheme] = useState([])
@@ -222,6 +223,7 @@ const NewsScreen = () => {
                 }
                 onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum = false; }}
                 ListFooterComponent={renderFooter}
+                keyExtractor={item => item.id}
             />
 
         </View>

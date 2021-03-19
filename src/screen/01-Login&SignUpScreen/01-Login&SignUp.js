@@ -13,7 +13,7 @@ const LoginSignUp = () => {
     const [signUpView, setSignUpView] = useState(false)
     const navigation = useNavigation()
     //Phần email và mật khẩu để đăng kí, đăng nhập
-    const [email, setEmail] = useState("admin@gmail.com")
+    const [email, setEmail] = useState("linhguyenchi227@gmail.com")
     const [password, setPassword] = useState("123456")
     const [confirmPw, setConfirmPw] = useState("123456")
     //Phần để kiểm tra quá trình đăng kí có xảy ra lỗi hay không 

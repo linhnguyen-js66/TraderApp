@@ -1,9 +1,8 @@
-import {StyleSheet} from 'react-native'
+import {StyleSheet, Dimensions} from 'react-native'
 import { fontSize, palette } from '../../theme'
 export default StyleSheet.create({
     containHead:{
         backgroundColor:palette.white,
-        flex:1,
         marginTop:8,
         flexDirection:'row',
         borderBottomWidth:0.5
@@ -18,25 +17,25 @@ export default StyleSheet.create({
         paddingBottom:16
     },
     img:{
-        height:850,
-       
-        width:'100%',
-        flex:1
+        flex: 1,
+    width: undefined,
+    height: undefined,
+    resizeMode: 'cover'
     },
     containImg:{
   
         elevation:9,
     
-        flex:1
+        
     },
     detailCoupon:{
         position:'absolute',
-        flex:1,
+        
         backgroundColor:palette.white,
         width:'90%',
         marginTop:16,
         alignSelf:'center',
-        height:200,
+       
         borderRadius:10,
         elevation:10
     },

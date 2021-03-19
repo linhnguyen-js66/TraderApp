@@ -13,7 +13,7 @@ import firestore from "@react-native-firebase/firestore"
 const ListInfo = ({ item, data }) => {
     const navigation = useNavigation()
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 }} key={item.id}>
             <View style={styles.containInfo}>
                 <Image source={require('../../image/email.png')} style={styles.icon} />
                 <Text style={styles.infotext}>{item.email}</Text>
@@ -31,10 +31,18 @@ const ListInfo = ({ item, data }) => {
                 
                 <Text style={styles.infotext}>{item.type == "Cá nhân" ? item.count : item.money+' VNĐ'}</Text>
             </View>
-            {item.type == "Cá nhân" && <View style={styles.containInfo}>
+            {item.type == "Cá nhân" && <TouchableOpacity style={styles.containInfo}
+               onPress={()=> navigation.navigate(screen.YourCouponScreen26)}
+            >
                 <Image source={require('../../image/coupon.png')} style={styles.icon} />
-                <Text style={styles.infotext}>Ví voucher</Text>
-            </View>}
+                <View style={{ flexDirection: 'row', flex: 1 }}>
+                    <Text style={styles.infotext}>Ví Voucher</Text>
+                    <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+                        <Icon name="right" type="antdesign" size={15} color="grey" />
+                    </View>
+
+                </View>
+            </TouchableOpacity>}
 
             <TouchableOpacity style={styles.containInfo}
                onPress={()=>navigation.navigate(screen.SavePostScreen23)}
@@ -91,7 +99,7 @@ const AccounSetting18 = () => {
 
     const uid = auth().currentUser.uid
     const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const toggleSwitch = () => setIsEnabled(en);
     //Lấy thông tin người dùng
     const getInformation = async (uid) => {
         try {

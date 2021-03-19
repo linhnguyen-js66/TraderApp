@@ -4,7 +4,7 @@ import styles from './style'
 import LikeAndComment from '../../components/LikeAndComment'
 import { HeaderCustom, Score } from '../../components/HeaderCustom'
 import ButtonForm from '../../components/ButtonForm'
-import { StackRouter, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { screen } from '../../navigation/screen'
 import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
@@ -26,11 +26,20 @@ const ListTheme = ({ data, onPress}) => {
 }
 const ListPost = ({ item, onClick, user, Comment, snapshot, datatheme, clickDelete}) => {
     const { createdAt, image, idUser, status, id, idPost, idUserLike, like, theme, saved } = item
-
+        //Refresh Data
+        const [Refresh,setRefresh] = useState([])
+    
+        useEffect(() => {
+            const unsubscribe = navigation.addListener('focus', () => {
+               setRefresh([])
+              
+            });
+            return unsubscribe;
+        }, [navigation])
     const [isLike, setIsLike] = useState(like)
     const [isSave, setIsSave] = useState(saved)
     //Button Like Post
-
+     
     const [amountLike, setAmountLike] = useState(snapshot)
     let uid = auth().currentUser.uid
 
@@ -71,16 +80,7 @@ const ListPost = ({ item, onClick, user, Comment, snapshot, datatheme, clickDele
         setDataComment(result)
     }
     const navigation = useNavigation()
-    //Refresh Data
-    const [Refresh,setRefresh] = useState([])
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-           setRefresh([])
-           
-        });
-        return unsubscribe;
-    }, [navigation])
-    //////////
+
     useEffect(() => {
         setIsLike(like ? true : false)
         getDataComment()
@@ -192,7 +192,7 @@ const ListPost = ({ item, onClick, user, Comment, snapshot, datatheme, clickDele
             })
             await firestore().collection('DataSavedPost').doc(id).delete()
         } catch (error) {
-
+               console.log(error)
         }
     }
     return (
@@ -452,7 +452,6 @@ const QuestionScreen11 = ({ navigation }) => {
         )
     }
     //GetDataUser from firebase 
-
     const [DataUser, setDataUser] = useState([])
     const getDataUserInfomation = async () => {
         let resultData = []
@@ -460,13 +459,14 @@ const QuestionScreen11 = ({ navigation }) => {
         dataUser.docs.map(item => resultData.push(item.data()))
         setDataUser(resultData)
     }
-    //Refresh Data
-    const [Refresh, setRefresh] = useState([])
+
+  
     useEffect(() => {
+       
         getDataPost()
         getDataUserInfomation()
         getDataTheme()
-    
+      
     }, [])
     //id User
     let uid = auth().currentUser.uid

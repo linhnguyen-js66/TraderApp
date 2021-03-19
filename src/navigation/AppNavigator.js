@@ -30,137 +30,128 @@ import HistoryUpload25 from '../screen/22-HistoryUpload-Screen'
 import SavePostScreen23 from '../screen/23-SavePost-Screen'
 import DetailSavePost24 from '../screen/24-DetailSavePostScreen'
 import DetailStatus25 from '../screen/25-DetailStatus-Screen'
+import YourCouponScreen26 from '../screen/26-YourCoupon-Screen'
 import { screen } from './screen'
 import { palette, spacing } from '../theme';
-import MarketScreen15 from '../screen/15-MarketScreen';
+
 const Stack = createStackNavigator()
 const Tab = createMaterialBottomTabNavigator()
 
-const AppStack = () => {
-    return(
-        <Stack.Navigator
-         initialRouteName='App'
-         screenOptions={{headerShown:false}}
-        >
-            <Stack.Screen name={'App'} component={MainAppStack}/>
-        </Stack.Navigator>
-    )
-}
-
 const MainAppStack = () => {
-    return(
+    return (
         <Stack.Navigator
-          initialRouteName="Auth"
-          screenOptions={{ headerShown:false }}
+            initialRouteName="Auth"
+            screenOptions={{ headerShown: false }}
         >
-           <Stack.Screen name="Auth" component={AuthStack}/>
-           <Stack.Screen name="Home" component={HomeTab}/>
+            <Stack.Screen name="Auth" component={AuthStack} />
+            <Stack.Screen name="Home" component={HomeTab} />
         </Stack.Navigator>
     )
 }
 
 const AuthStack = () => {
-    return(
-       <Stack.Navigator
-         initialRouteName="LoginAndSignup"
-         screenOptions={{
-             headerShown:false
+    return (
+        <Stack.Navigator
+            initialRouteName="LoginAndSignup"
+            screenOptions={{
+                headerShown: false
             }}
-       >
-         <Stack.Screen 
-         name="LoginAndSignup"
-         component={ LoginScreenandSignUp }
-         options={{ headerShown: false }}
-         />
+        >
+            <Stack.Screen
+                name="LoginAndSignup"
+                component={LoginScreenandSignUp}
+                options={{ headerShown: false }}
+            />
 
-         <Stack.Screen
-         name="ForgotPassword"
-         component={ForgotPassword}
-         options={{ headerShown: false }}
-         />
+            <Stack.Screen
+                name="ForgotPassword"
+                component={ForgotPassword}
+                options={{ headerShown: false }}
+            />
 
-         <Stack.Screen
-          name="AddInformation"
-          component={AddInforScreen}
-          options={{ headerShown: false }}
-         />
-       </Stack.Navigator>
+            <Stack.Screen
+                name="AddInformation"
+                component={AddInforScreen}
+                options={{ headerShown: false }}
+            />
+        </Stack.Navigator>
     )
 }
 
 const BottomTab = () => {
-    return(
+    return (
         <Tab.Navigator
-           initialRouteName="Tin tức"
-           screenOptions = {({route})=>({
-               tabBarIcon: ({focused}) => {
-                   let iconName 
-                   if (route.name === screen.StudyScreen){
-                       iconName = focused ? "notebook" : "notebook-outline"
-                   }
-                   else if( route.name === screen.ExperimentScreen){
-                       iconName = focused ? "test-tube" : "test-tube-empty"
-                   }
-                   else if( route.name === screen.NewsScreen){
-                       iconName = focused ? "newspaper-variant" : "newspaper-variant-outline"
-                   }
-                   else if( route.name === screen.QuestionScreen){
-                       iconName = focused ? "comment-processing" : "comment-processing-outline"
-                   }
-                   else if ( route.name === screen.MarketScreen){
-                    iconName = focused ? "shopping" : "shopping-outline" 
-                   }
-                   return (
-                       <Icon
-                       name={iconName}
-                       size={25}
-                       type="material-community"
-                       color = {focused ?palette.buttonColor : palette.grey }
-                       style  = {{marginBottom: spacing[4]}}
-                       />
-                   )
-               }
-           })}
-           barStyle={{backgroundColor: palette.white}}
-           activeColor = {palette.buttonColor}
+            initialRouteName="Tin tức"
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused }) => {
+                    let iconName
+                    if (route.name === screen.StudyScreen) {
+                        iconName = focused ? "notebook" : "notebook-outline"
+                    }
+                    else if (route.name === screen.ExperimentScreen) {
+                        iconName = focused ? "test-tube" : "test-tube-empty"
+                    }
+                    else if (route.name === screen.NewsScreen) {
+                        iconName = focused ? "newspaper-variant" : "newspaper-variant-outline"
+                    }
+                    else if (route.name === screen.QuestionScreen) {
+                        iconName = focused ? "comment-processing" : "comment-processing-outline"
+                    }
+                    else if (route.name === screen.MarketScreen) {
+                        iconName = focused ? "shopping" : "shopping-outline"
+                    }
+                    return (
+                        <Icon
+                            name={iconName}
+                            size={25}
+                            type="material-community"
+                            color={focused ? palette.buttonColor : palette.grey}
+                            style={{ marginBottom: spacing[4] }}
+                        />
+                    )
+                }
+            })}
+            barStyle={{ backgroundColor: palette.white }}
+            activeColor={palette.buttonColor}
         >
-            <Tab.Screen name="Học" component={StudyScreen}/>
-            <Tab.Screen name="Thử nghiệm" component={ExperimentScreen}/>
-            <Tab.Screen name="Tin tức" component={NewsScreen}/>
-            <Tab.Screen name="Tò mò" component={QuestionScreen}/>
-            <Tab.Screen name="Thị trường" component={MarketScreen}/>
+            <Tab.Screen name="Học" component={StudyScreen} />
+            <Tab.Screen name="Thử nghiệm" component={ExperimentScreen} />
+            <Tab.Screen name="Tin tức" component={NewsScreen} />
+            <Tab.Screen name="Tò mò" component={QuestionScreen} />
+            <Tab.Screen name="Thị trường" component={MarketScreen} />
         </Tab.Navigator>
     )
 }
 
 const HomeTab = () => {
-    return(
+    return (
         <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          gestureEnabled: true 
-        }}
+            screenOptions={{
+                headerShown: false,
+                gestureEnabled: true
+            }}
         >
-          <Stack.Screen name="BottomTab" component={BottomTab}/>
-          <Stack.Screen name="AccountSetting" component={AccountSetting}/>
-          <Stack.Screen name="AddressAndMarketScreen" component={AddressAndMarket}/>
-          <Stack.Screen name="DetailNewScreen" component={DetailNewScreen}/>
-          <Stack.Screen name="DetailComment" component={DetailComment}/>
-          <Stack.Screen name="DetailCoupon" component={DetailCoupon}/>
-          <Stack.Screen name="CouponScreen" component={CouponScreen}/>
-          <Stack.Screen name="LessonScreen" component={LessonScreen}/>
-          <Stack.Screen name="DetailLesson" component={DetailLesson}/>
-          <Stack.Screen name="ExamScreen" component={ExamScreen}/>
-          <Stack.Screen name="ThemeScreen" component={ThemeScreen}/>
-          <Stack.Screen name="SearchScreen" component={SearchScreen}/>
-          <Stack.Screen name="StatusScreen" component={StatusScreen}/>
-          <Stack.Screen name="UploadCart" component={UploadCart21}/>
-          <Stack.Screen name="HistoryUpload25" component={HistoryUpload25}/>
-          <Stack.Screen name="SavePost23" component={SavePostScreen23}/>
-          <Stack.Screen name="DetailSavePost24" component={DetailSavePost24}/>
-          <Stack.Screen name="DetailStatus25" component={DetailStatus25}/>
+            <Stack.Screen name="BottomTab" component={BottomTab} />
+            <Stack.Screen name="AccountSetting" component={AccountSetting} />
+            <Stack.Screen name="AddressAndMarketScreen" component={AddressAndMarket} />
+            <Stack.Screen name="DetailNewScreen" component={DetailNewScreen} />
+            <Stack.Screen name="DetailComment" component={DetailComment} />
+            <Stack.Screen name="DetailCoupon" component={DetailCoupon} />
+            <Stack.Screen name="CouponScreen" component={CouponScreen} />
+            <Stack.Screen name="LessonScreen" component={LessonScreen} />
+            <Stack.Screen name="DetailLesson" component={DetailLesson} />
+            <Stack.Screen name="ExamScreen" component={ExamScreen} />
+            <Stack.Screen name="ThemeScreen" component={ThemeScreen} />
+            <Stack.Screen name="SearchScreen" component={SearchScreen} />
+            <Stack.Screen name="StatusScreen" component={StatusScreen} />
+            <Stack.Screen name="UploadCart" component={UploadCart21} />
+            <Stack.Screen name="HistoryUpload25" component={HistoryUpload25} />
+            <Stack.Screen name="SavePost23" component={SavePostScreen23} />
+            <Stack.Screen name="DetailSavePost24" component={DetailSavePost24} />
+            <Stack.Screen name="DetailStatus25" component={DetailStatus25}/>
+            <Stack.Screen name="YourCoupon" component={YourCouponScreen26}/>
         </Stack.Navigator>
     )
 }
 
-export const AppNavigator = () => <NavigationContainer>{AppStack()}</NavigationContainer>
+export const AppNavigator = () => <NavigationContainer>{MainAppStack()}</NavigationContainer>

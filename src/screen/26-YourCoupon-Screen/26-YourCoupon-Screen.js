@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, TouchableOpacity, Image, FlatList, RefreshControl, ActivityIndicator } from "react-native"
-
+import { Text, View, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, RefreshControl,AsyncStorage} from "react-native"
 import styles from './style'
 import HeaderView from '../../components/Header'
+import { palette } from '../../theme'
+import firestore from '@react-native-firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
 import { screen } from '../../navigation/screen'
-import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
-import { palette } from '../../theme'
+
 const ListCoupon = ({ item, index, onPress, product }) => {
     return (
         item.saved == false && (
@@ -34,7 +34,7 @@ const ListCoupon = ({ item, index, onPress, product }) => {
     )
 }
 
-const CouponScreen16 = () => {
+const YourCouponScreen26 = () => {
     const navigation = useNavigation()
     const [lastDoc, setLastDoc] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -55,7 +55,7 @@ const CouponScreen16 = () => {
     }
     const getDataCoupon = async () => {
         setIsLoading(true)
-        let snapshot = await firestore().collection("Coupon").orderBy('id').limit(3).get()
+        let snapshot = await firestore().collection("OwnerCoupon").orderBy('id').limit(3).get()
         if (!snapshot.empty) {
             let listPost = []
             //Date
@@ -65,21 +65,13 @@ const CouponScreen16 = () => {
             let expiry = dateOn
 
             let currentTime = new Date()
-
+            let resultData
             setLastDoc(snapshot.docs[snapshot.docs.length - 1])
-            await firestore().collection("Coupon").orderBy('id').limit(3).get().then(querySnapshot => {
+            await firestore().collection("OwnerCoupon").orderBy('id').limit(3).get().then(querySnapshot => {
                 querySnapshot.forEach(doc => {
-                    listPost.push({ idCP: doc.id, ...doc.data(), saved: false })
-                    let resultData = listPost
-                    //Save Post
-                    for (let data = 0; data < resultData.length; data++) {
-                        let amountUser = resultData[data].idUserReceive
-                        for (let user = 0; user < amountUser.length; user++) {
-                            if (amountUser[user].uid == uid) {
-                                resultData[data].saved = true
-                            }
-                        }
-                    }
+                    listPost.push({...doc.data(), saved: false })
+                    resultData = listPost
+                
                     //Expiry
                     for (let data = 0; data < resultData.length; data++) {
                         if (resultData[data].idCategory == "special") {
@@ -88,12 +80,12 @@ const CouponScreen16 = () => {
                             }
                         }
                     }
-                    //another coupon
-                    caculateExpiryDateForAnotherCoupon(resultData, currentTime)
+                
+                   
                 })
             })
 
-            setDataCoupon(listPost)
+            setDataCoupon(resultData)
         }
         else {
             setLastDoc(null)
@@ -106,7 +98,7 @@ const CouponScreen16 = () => {
             setIsMoreLoading(true)
 
             setTimeout(async () => {
-                let snapshot = await firestore().collection("Coupon").orderBy('id').limit(3).startAfter(lastDoc.data().id).get()
+                let snapshot = await firestore().collection("OwnerCoupon").orderBy('id').limit(3).startAfter(lastDoc.data().id).get()
                 if (!snapshot.empty) {
                     let listPost = DataPost
                     let date = createdAccount
@@ -114,22 +106,12 @@ const CouponScreen16 = () => {
                     dateOn.setDate(dateOn.getDate() + 30)
                     let expiry = dateOn
                     let currentTime = new Date()
-
+                    let resultData 
                     setLastDoc(snapshot.docs[snapshot.docs.length - 1])
-                    await firestore().collection("Coupon").orderBy('id').limit(3).startAfter(lastDoc.data().id).get().then(querySnapshot => {
+                    await firestore().collection("OwnerCoupon").orderBy('id').limit(3).startAfter(lastDoc.data().id).get().then(querySnapshot => {
                         querySnapshot.forEach(doc => {
-                            listPost.push({ idCP: doc.id, ...doc.data(), saved: false })
-                            let resultData = listPost
-
-                            //Save Post
-                            for (let data = 0; data < resultData.length; data++) {
-                                let amountUser = resultData[data].idUserReceive
-                                for (let user = 0; user < amountUser.length; user++) {
-                                    if (amountUser[user].uid == uid) {
-                                        resultData[data].saved = true
-                                    }
-                                }
-                            }
+                            listPost.push({...doc.data(), saved: false })
+                            resultData = listPost.filter(item => item.uid == uid)
                             //Expiry
                             for (let data = 0; data < resultData.length; data++) {
                                 if (resultData[data].idCategory == "special") {
@@ -138,12 +120,12 @@ const CouponScreen16 = () => {
                                     }
                                 }
                             }
-                            caculateExpiryDateForAnotherCoupon(resultData, currentTime)
+                            
                         })
                     })
 
 
-                    setDataCoupon(listPost)
+                    setDataCoupon(resultData)
                     if (snapshot.docs.length < 3) setLastDoc(null)
                 }
                 else {
@@ -171,27 +153,8 @@ const CouponScreen16 = () => {
         )
     }
     //expiry date
-    const [refresh,setRefresh] = useState([])
-    const caculateExpiryDateForAnotherCoupon = async (resultData, currentTime) => {
-        try {
-            setRefresh([])
-            
-            for (let data = 0; data < resultData.length; data++) {
-                let dateCheck = resultData[data].dateof
-                let id = resultData[data].idCP
-                
-                if (resultData[data].idCategory !== "special") {
-
-                    if (new Date(dateCheck) < currentTime == true) {
-                        await firestore().collection("Coupon").doc(id).delete()
-                        await firestore().collection("OwnerCoupon").doc(id).delete()
-                    }
-                }
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
+    
+    
     useEffect(() => {
         getDataCoupon()
         getDataUser()
@@ -240,4 +203,5 @@ const CouponScreen16 = () => {
         </View>
     )
 }
-export default CouponScreen16
+
+export default YourCouponScreen26

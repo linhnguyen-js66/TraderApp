@@ -54,6 +54,10 @@ export const SaveInformationUser = async (uid,email,username,type,notification,a
           Alert.alert("Thông báo","Thông tin còn trống")
           return false
        }
+       let d = new Date()
+       let ngay = d.getDate()
+       let thang = d.getMonth() + 1
+       let nam = d.getFullYear();
        await firestore().collection("UserInformation").doc(uid).set({
            name:username,
            email:email,
@@ -61,7 +65,8 @@ export const SaveInformationUser = async (uid,email,username,type,notification,a
            notification:notification,
            count:100,
            uid:uid,
-           ava:ava
+           ava:ava,
+           createdAt:`${nam}/${thang}/${ngay}`
        })
        Alert.alert("Thông báo","Đăng kí thành công")
        return true

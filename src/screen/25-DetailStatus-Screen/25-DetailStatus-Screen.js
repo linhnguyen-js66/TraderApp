@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, RefreshControl } from "react-native"
+import { Text, View, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, RefreshControl,AsyncStorage} from "react-native"
 import styles from './style'
 import HeaderView from '../../components/Header'
 import { palette } from '../../theme'
@@ -9,6 +9,7 @@ import { screen } from '../../navigation/screen'
 import auth from '@react-native-firebase/auth'
 import { Icon } from 'react-native-elements'
 import LikeAndComment from '../../components/LikeAndComment'
+
 const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelete }) => {
     const { createdAt, image, idUser, status, id, idPost, idUserLike, like, theme, saved} = item
     const navigation = useNavigation()
@@ -71,6 +72,7 @@ const ListPost = ({ item, onClick, user, Comment,snapshot, datatheme, clickDelet
         deleteLikeFirebase(uid, id)
     }
     const uploadLikeFirebase = async (uid, id) => {
+       
         try {
             let newUser = {
                 uid: uid
@@ -342,7 +344,7 @@ const DetailStatus25 = ({route}) => {
 
             </View>
             {/**End */}
-            <View>
+            <View style={{marginBottom:32}}>
             <FlatList
                     data={DataPost}
                     keyExtractor={item => item.id}
@@ -350,7 +352,7 @@ const DetailStatus25 = ({route}) => {
                         onClick={() => navigation.navigate(screen.DetailComment, {
                             idPost: item.idPost
                         })}
-
+                        
                         user={DataUser}
                         snapshot={DataPost}
                         datatheme={DataTheme}

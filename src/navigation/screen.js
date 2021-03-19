@@ -23,7 +23,8 @@ const screen ={
     HistoryUpload25:'HistoryUpload25',
     SavePostScreen23:'SavePost23',
     DetailSavePost24:'DetailSavePost24',
-    DetailStatus25:'DetailStatus25'
+    DetailStatus25:'DetailStatus25',
+    YourCouponScreen26:'YourCoupon'
 }
 
 export {screen}
