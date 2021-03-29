@@ -12,6 +12,7 @@ import InputForm from '../../components/InputForm'
 import ButtonForm from '../../components/ButtonForm'
 import { launchImageLibrary } from 'react-native-image-picker'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import QRCode from 'react-native-qrcode-svg'
 const Data = [
     {
         id: 1,
@@ -94,8 +95,24 @@ const UploadCart21 = () => {
         return text
     }
     let itemID = makeID()
+    //Value QRCode for coupon
+    const [qrCode,setQRcode] = useState()
+    //Check QRcode in Coupon
+    const [checkQR,setCheckQR] = useState(false)
+    const checkQRCodeExist = async () => {
+        let snapshot = await firestore().collection("Coupon").get()
+        if(!snapshot.empty){
+            snapshot.docs.map(item => {
+                if(item.data().qrCode == qrCode){
+                    setCheckQR(true)
+                    Alert.alert("Thông báo","Mã khuyến mại đã tồn tại")
+                }
+            })
+        }
+    }
+    
     const UploadItemsDataProductOfCompany = async () => {
-        if (name.trim() == "" || address.trim() == "" || price.trim() == "" || phone.trim() == "" || description.trim() == "" || endTime.trim() == "" || photo == null) {
+        if (name.trim() == "" || address.trim() == "" || price.trim() == "" || phone.trim() == "" || description.trim() == "" || endTime.trim() == "" || photo == null || qrCode == undefined) {
             Alert.alert("Thông báo", "Thông tin còn trống", [
                 {
                     text: "Tiếp",
@@ -137,16 +154,26 @@ const UploadCart21 = () => {
                     await firestore().collection("Address").doc(itemID).set(newItem)
                 }
                 else if (colorType == 3) {
-                    await firestore().collection("Coupon").doc(itemID).set(newItem)
+                    await firestore().collection("Coupon").doc(itemID).set({
+                        ...newItem,
+                        qrCode:qrCode
+                    })
                 }
-                await firestore().collection("DataCompany").doc(itemID).set(newItem)
+                ///
+                colorType == 3 ?
+                await firestore().collection("DataCompany").doc(itemID).set({
+                    ...newItem,
+                    qrCode:qrCode
+                })
+                :
+                await firestore().collection("DataCompany").doc(itemID).set({newItem})
                 navigation.navigate(screen.AccountSetting)
             } catch (error) {
                 console.log(error)
             }
         }
     }
-
+    
     //Select Value Picker
     const [pickerAddress, setPickerAddress] = useState(Address[0].id)
 
@@ -162,7 +189,7 @@ const UploadCart21 = () => {
         )
         setInformation(result)
     }
-    
+
     const getMoneyOfPost = async () => {
         let resultData = infomation
         let newMoney
@@ -265,6 +292,22 @@ const UploadCart21 = () => {
                         </Picker>
 
                     }
+                    {
+                        colorType == 3 && (
+                         <View>
+                             <InputForm placeholder="Mã khuyến mại" onChangeText={(text)=> setQRcode(text)}/>
+                             <View style={{marginTop:40}}>
+                             <QRCode
+                                 value={qrCode !== "" ? qrCode : "VNEconomy"}
+                                    size={200}
+                                    bgColor='#000000'
+                                    fgColor='#FFFFFF'
+                                
+                             />
+                             </View>
+                         </View>
+                        )
+                    }
                     <InputForm placeholder="Giá:" onChangeText={(text) => setPrice(text)} />
                     <InputForm placeholder="Miêu tả:" onChangeText={(text) => setDescription(text)} />
                     <InputForm placeholder="Hạn sử dụng:(yyyy/mm/dd)" onChangeText={(text) => setEndTime(text)} />
@@ -272,8 +315,10 @@ const UploadCart21 = () => {
                 <View style={{ marginBottom: 100, marginHorizontal: 16, marginTop: 40 }}>
                     <ButtonForm title="Đăng bài"
                         onPress={() => {
-
-                            getMoneyOfPost()
+                            checkQRCodeExist()
+                            if(checkQR == false){
+                                getMoneyOfPost()
+                            }
                         }}
                     />
                 </View>
