@@ -5,76 +5,44 @@ import Carousel, { Pagination } from 'react-native-snap-carousel'
 import { HeaderCustom, Score } from '../../components/HeaderCustom'
 import { useNavigation } from '@react-navigation/native'
 import auth from '@react-native-firebase/auth'
+import firestore from '@react-native-firebase/firestore'
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH);
 // const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4)
 import {screen} from '../../navigation/screen'
-const Data = [
-    {
-        title: "Học đi đôi với hành",
-        lesson: "Bước đầu tiên để kinh doanh",
-        image: require("../../image/yellow.png")
-    },
-    {
-        title: "Tiếp tục chiến đấu",
-        lesson: "Những cám dỗ phải đi qua",
-        image: require("../../image/orange.png")
-    },
-    {
-        title: "Tình huống thực tế",
-        lesson: "Đương đầu với thử thách",
-        image: require("../../image/red.png")
-    }
-]
-const Chapter = [
-    {
-        chapter: "Chương 1",
-        title: "Làm quen",
-        image: require('../../image/green.png')
-    },
-    {
-        chapter: "Chương 2",
-        title: "Cạnh tranh thị trường",
-        image: require('../../image/blue.png')
-    },
-    {
-        chapter: "Chương 3",
-        title: "Luật kinh doanh",
-        image: require('../../image/body.png')
-    },
-]
+
 const RenderItem = ({ data, onPress }) => {
-    const { title, lesson, image } = data
+    const { name, description, image } = data
 
     return (
         <TouchableOpacity style={{marginHorizontal:16}}
         onPress={onPress}
         >
-            <Image source={image} style={styles.ImageSlide} />
+            <Image source={{uri:image}} style={styles.ImageSlide} />
             <View style={{ position: 'absolute', marginTop: 280, marginHorizontal: 16 }}>
                 <Text style={styles.title}>
-                    {title}
+                    {name}
                 </Text>
                 <Text style={styles.titleLesson}>
-                    {lesson}
+                    {description}
                 </Text>
             </View>
         </TouchableOpacity>
     )
 }
 const CarouselHorizal = ({ data, onPress }) => {
-    const { chapter, title, image } = data
+    const { name,description, image } = data
     return (
         <TouchableOpacity style={{ marginHorizontal: 16 }}
         onPress={onPress}
         >
-            <Image source={image} style={styles.ImageSlide2} />
+            <Image source={{uri:image}} style={styles.ImageSlide2} />
             <View style={{ position: 'absolute', marginTop: 32, marginHorizontal: 16 }}>
                 <Text style={styles.title}>
-                    {chapter}
+                    {name}
                 </Text>
                 <Text style={styles.ChapterLesson}>
-                    {title}
+                    {description}
                 </Text>
             </View>
         </TouchableOpacity>
@@ -86,7 +54,7 @@ const StudyScreen = () => {
     const pagination = () => {
         return (
             <Pagination
-                dotsLength={Chapter.length}
+                dotsLength={DataChapter.length}
                 activeDotIndex={activeSlide}
                 dotStyle={{
                     width: 40,
@@ -105,6 +73,34 @@ const StudyScreen = () => {
         )
     }
     const navigation = useNavigation()
+    //get data study
+    const [DataChapter,setDataChapter] = useState([])
+    const [DataLesson,setDataLesson] = useState([])
+    const [loading,setLoading] = useState(false)
+    const getDataChapter = async () => {
+       setLoading(true)
+       let resultData = []
+       let snapshot = await firestore().collection("CategoryChapterExam").orderBy('id','asc').get()
+       if(!snapshot.empty){
+            snapshot.docs.map(item => resultData.push(item.data()))
+       }
+       setLoading(false)
+       setDataChapter(resultData)
+    }
+    const getDataLesson = async () => {
+    setLoading(true)
+    let resultData = []
+    let snapshot = await firestore().collection("CategoryChapter").orderBy('id','asc').get()
+    if(!snapshot.empty){
+        snapshot.docs.map(item => resultData.push(item.data()))
+    }
+    setLoading(false)
+    setDataLesson(resultData)
+    }
+    useEffect(()=>{
+        getDataChapter()
+        getDataLesson()
+    },[])
     return (
         <ScrollView>
             <View style={styles.header}>
@@ -115,7 +111,7 @@ const StudyScreen = () => {
             <View style={{flex:1,flexDirection:'row',marginTop:16}}>
                 <Carousel
                     layout={"stack"}
-                    data={Data}
+                    data={DataChapter}
                     renderItem={({ item, index }) => <RenderItem 
                     data={item} 
                     onPress={()=>navigation.navigate(screen.ExamScreen)}
@@ -129,9 +125,12 @@ const StudyScreen = () => {
             <View style={{ marginBottom:8}}>
                 <Carousel
                     layout={"default"}
-                    data={Chapter}
+                    data={DataLesson}
                     renderItem={({ item, index }) => <CarouselHorizal data={item} 
-                    onPress={()=>navigation.navigate(screen.DetailLesson)}
+                    onPress={()=>navigation.navigate(screen.LessonScreen,{
+                        idChapter:item.id,
+                        name:item.description
+                    })}
                     />}
                     sliderWidth={SLIDER_WIDTH}
                     itemWidth={ITEM_WIDTH}

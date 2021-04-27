@@ -25,6 +25,6 @@ export default StyleSheet.create({
     },
     ButtonForm:{
         marginHorizontal:64,
-        marginBottom:64
+        marginBottom:32
     }
 })

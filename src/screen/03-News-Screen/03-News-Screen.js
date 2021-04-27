@@ -102,7 +102,7 @@ const NewsScreen = () => {
             resultFour.sort(byDate)[0],           
         ]
         setDataNewsHorizontal(lastResult)
-        console.log(dataNewsHorizontal)
+      
     }
     //get DataTheme 
     const [DataTheme, setDataTheme] = useState([])

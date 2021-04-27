@@ -46,13 +46,16 @@ const CouponScreen16 = () => {
     ////////
     const [DataUser, setDataUser] = useState([])
     const [createdAccount, setCreatedAccount] = useState('2021/02/20')
+    const [type,setType] = useState("")
     const getDataUser = async () => {
         let resultData = []
         let snapshot = await firestore().collection("UserInformation").where("uid", '==', uid).get()
         snapshot.docs.map(item => resultData.push(item.data()))
         setDataUser(resultData)
         setCreatedAccount(resultData[0].createdAt)
+     
     }
+
     const getDataCoupon = async () => {
         setIsLoading(true)
         let snapshot = await firestore().collection("Coupon").orderBy('id').limit(3).get()
@@ -71,7 +74,7 @@ const CouponScreen16 = () => {
                 querySnapshot.forEach(doc => {
                     listPost.push({ idCP: doc.id, ...doc.data(), saved: false })
                     let resultData = listPost
-                    //Save Post
+                   // Save Post
                     for (let data = 0; data < resultData.length; data++) {
                         let amountUser = resultData[data].idUserReceive
                         for (let user = 0; user < amountUser.length; user++) {
@@ -81,18 +84,21 @@ const CouponScreen16 = () => {
                         }
                     }
                     //Expiry
-                    for (let data = 0; data < resultData.length; data++) {
-                        if (resultData[data].idCategory == "special") {
-                            if (expiry < currentTime == true) {
-                                resultData[data].saved = true
+                  
+                        for (let data = 0; data < resultData.length; data++) {
+                            if (resultData[data].idCategory == "special" ) {
+                                if (expiry < currentTime == true) {
+                                    resultData[data].saved = true
+                                }
                             }
                         }
-                    }
+                    
+                   
                     //another coupon
                     caculateExpiryDateForAnotherCoupon(resultData, currentTime)
                 })
             })
-
+             
             setDataCoupon(listPost)
         }
         else {
@@ -121,7 +127,7 @@ const CouponScreen16 = () => {
                             listPost.push({ idCP: doc.id, ...doc.data(), saved: false })
                             let resultData = listPost
 
-                            //Save Post
+                            // //Save Post
                             for (let data = 0; data < resultData.length; data++) {
                                 let amountUser = resultData[data].idUserReceive
                                 for (let user = 0; user < amountUser.length; user++) {
@@ -131,13 +137,16 @@ const CouponScreen16 = () => {
                                 }
                             }
                             //Expiry
-                            for (let data = 0; data < resultData.length; data++) {
-                                if (resultData[data].idCategory == "special") {
-                                    if (expiry < currentTime == true) {
-                                        resultData[data].saved = true
+                           
+                                for (let data = 0; data < resultData.length; data++) {
+                                    if (resultData[data].idCategory == "special") {
+                                        if (expiry < currentTime == true ) {
+                                            resultData[data].saved = true
+                                        }
                                     }
                                 }
-                            }
+                            
+                          
                             caculateExpiryDateForAnotherCoupon(resultData, currentTime)
                         })
                     })
@@ -204,7 +213,7 @@ const CouponScreen16 = () => {
                 </View>
                 <Image source={require('../../image/logo2.png')} style={styles.ImageLogo} />
             </View>
-
+        
             <View style={{ marginTop: 16, marginBottom: 64 }}>
                 <FlatList
                     data={DataCoupon}

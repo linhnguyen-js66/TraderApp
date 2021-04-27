@@ -98,19 +98,30 @@ const UploadCart21 = () => {
     //Value QRCode for coupon
     const [qrCode,setQRcode] = useState()
     //Check QRcode in Coupon
-    const [checkQR,setCheckQR] = useState(false)
+
     const checkQRCodeExist = async () => {
         let snapshot = await firestore().collection("Coupon").get()
+        let resultData = []
         if(!snapshot.empty){
-            snapshot.docs.map(item => {
-                if(item.data().qrCode == qrCode){
-                    setCheckQR(true)
+            if(resultData.length == 0){
+               snapshot.docs.map(item => {
+                resultData.push(item.data())
+            }) 
+            }
+            
+            resultData.map(data => {
+                if(data.qrCode == qrCode){
+                    // setCheckQR(true)
                     Alert.alert("Thông báo","Mã khuyến mại đã tồn tại")
+                }
+                else{
+                    // setCheckQR(false)
+                    getMoneyOfPost()
                 }
             })
         }
     }
-    
+
     const UploadItemsDataProductOfCompany = async () => {
         if (name.trim() == "" || address.trim() == "" || price.trim() == "" || phone.trim() == "" || description.trim() == "" || endTime.trim() == "" || photo == null || qrCode == undefined) {
             Alert.alert("Thông báo", "Thông tin còn trống", [
@@ -316,9 +327,9 @@ const UploadCart21 = () => {
                     <ButtonForm title="Đăng bài"
                         onPress={() => {
                             checkQRCodeExist()
-                            if(checkQR == false){
-                                getMoneyOfPost()
-                            }
+                          
+                                
+                            
                         }}
                     />
                 </View>

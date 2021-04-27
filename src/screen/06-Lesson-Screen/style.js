@@ -36,25 +36,28 @@ export default StyleSheet.create({
     },
     contain:{
         backgroundColor:'#E5E5E5',
-        borderRadius:20
-    },
-    iconPlay:{
-        justifyContent:'center',
+        borderRadius:20,
+        flexDirection:'row',
         flex:1
     },
+    iconPlay:{
+       justifyContent:'center',
+       marginRight:8
+    },
     containAllTitle:{
-        flexDirection:'row',
-        marginHorizontal:32,
+        flex:1,
+        marginLeft:32,
         marginVertical:8
     },
     line:{
         borderLeftWidth:1,
         height:50,
         marginLeft:16,
-        borderLeftColor:palette.textInputBorderBottom
+        borderLeftColor:palette.textInputBorderBottom,
+      
     },
     iconLock:{
-        flex:1,
+ 
         flexDirection:"row"
     }
 })
