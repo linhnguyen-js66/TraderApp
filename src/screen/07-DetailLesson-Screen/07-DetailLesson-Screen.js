@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, RefreshControl } from "react-native"
+import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, RefreshControl, Alert } from "react-native"
 import styles from './style'
-import { Score } from '../../components/HeaderCustom'
+import Score from '../../components/Score'
 import HeaderView from '../../components/Header'
 import ButtonForm from '../../components/ButtonForm'
 import firestore from '@react-native-firebase/firestore'
 import auth from '@react-native-firebase/auth'
-const DetailLessonScreen = ({ route }) => {
+import { connect, useDispatch } from 'react-redux'
+const DetailLessonScreen = ({route,score}) => {
     const { idLesson, id } = route.params
     const [DataLesson, setDataLesson] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [Lesson, setLesson] = useState([])
+    const uid = auth().currentUser.uid
     const getDataLesson = async () => {
         setIsLoading(true)
         let resultData = []
@@ -39,10 +41,48 @@ const DetailLessonScreen = ({ route }) => {
         lesson = Data.filter(item => item.id == (Number(id) + 1))
         setLesson(lesson)
     }
+    const SaveUserStudied = async (idDoc,idLesson) => {
+        try{
+           let user = {
+               uid:uid
+           }
+           
+           await firestore().collection('DataStudy').doc(idDoc).update({
+            UserStudied: firestore.FieldValue.arrayUnion(user)
+           })
+           Alert.alert('Chúc mừng',
+           `Bạn đã thông qua bài học số ${idLesson}`)
+           
+        }catch(err){
+           console.log(err)
+        }
+    }
+    
+    const caculateScore = async (dataUser,count) => {
+        
+        let findUser = dataUser.findIndex(item=> item.uid == uid)
+        if(findUser < 0){
+            SaveScore(count)
+            let totalScore = score + count
+            await firestore().collection("UserInformation").doc(uid).update({
+                count:totalScore
+            })
+        }
+        else{
+            Alert.alert("Cảm ơn","Bạn đã thông qua bài học này")
+        }
+    }
     const onRefresh = () => {
         setTimeout(() => {
             getDataLesson()
         }, 1000)
+    }
+    const dispatch = useDispatch()
+    const SaveScore = (score) => {
+        dispatch({
+            type:'SAVE_SCORE',
+            payload:score
+        })
     }
     useEffect(() => {
         getDataLesson()
@@ -50,8 +90,8 @@ const DetailLessonScreen = ({ route }) => {
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             {/* Header */}
-            <View style={{ flexDirection: 'row', marginHorizontal: 16, marginTop: 8 }}>
-                <View style={{ marginTop: 4 }}>
+            <View style={{ flexDirection: 'row', marginHorizontal: 16}}>
+                <View style={{ marginVertical:8}}>
                     <HeaderView name="close" type="font-awesome" />
                 </View>
                 <View style={{ flex: 1, alignItems: "flex-end" }}>
@@ -77,7 +117,12 @@ const DetailLessonScreen = ({ route }) => {
                         <View style={[styles.ButtonForm]}>
 
                             <ButtonForm title="Bài tiếp"
-                                onPress={() => onPressNextLesson(item.id)}
+                                onPress={() => {
+                                    
+                                    SaveUserStudied(item.idLesson,item.id)
+                                    caculateScore(item.UserStudied,item.count)
+                                    onPressNextLesson(item.id)
+                                }}
                             />
 
                         </View>
@@ -96,5 +141,7 @@ const DetailLessonScreen = ({ route }) => {
         </View>
     )
 }
-
-export default DetailLessonScreen
+const maptoStatetoProps = (state)=> ({
+    score: state.data.Score
+})
+export default connect(maptoStatetoProps,null)(DetailLessonScreen) 

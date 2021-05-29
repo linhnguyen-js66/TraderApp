@@ -11,9 +11,8 @@ import { palette } from '../../theme'
 const ListCoupon = ({ item, index, onPress, product }) => {
     return (
         item.saved == false && (
-            <View style={[{ flex: 1, marginLeft: 16, marginBottom: 16 },
-            index % 2 == 1 && { marginRight: 16 },
-            product.length % 2 !== 0 || index == product.length - 1 ? { width: 180, flex: 0 } : null
+            <View style={[{ marginLeft: 16, marginBottom: 16, width:180},
+           
             ]}>
                 <Image source={{ uri: item.image }} style={styles.imgCoupon} />
                 <TouchableOpacity style={styles.containDetail} onPress={onPress}>

@@ -38,7 +38,8 @@ export default StyleSheet.create({
         backgroundColor:'#E5E5E5',
         borderRadius:20,
         flexDirection:'row',
-        flex:1
+        flex:1,
+        marginBottom:16
     },
     iconPlay:{
        justifyContent:'center',
@@ -54,7 +55,6 @@ export default StyleSheet.create({
         height:50,
         marginLeft:16,
         borderLeftColor:palette.textInputBorderBottom,
-      
     },
     iconLock:{
  

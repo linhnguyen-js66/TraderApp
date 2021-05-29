@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Text, View, ScrollView, TouchableOpacity, Image, FlatList, Dimensions } from "react-native"
 import styles from './style'
 import Carousel, { Pagination } from 'react-native-snap-carousel'
-import { HeaderCustom, Score } from '../../components/HeaderCustom'
+import { HeaderCustom } from '../../components/HeaderCustom'
+import Score from '../../components/Score'
 import { useNavigation } from '@react-navigation/native'
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
@@ -114,7 +115,10 @@ const StudyScreen = () => {
                     data={DataChapter}
                     renderItem={({ item, index }) => <RenderItem 
                     data={item} 
-                    onPress={()=>navigation.navigate(screen.ExamScreen)}
+                    onPress={()=>navigation.navigate(screen.ExamScreen,{
+                        idChapter:item.idChapter,
+                        name:item.description
+                    })}
                     />}
                     sliderWidth={SLIDER_WIDTH}
                     itemWidth={ITEM_WIDTH}

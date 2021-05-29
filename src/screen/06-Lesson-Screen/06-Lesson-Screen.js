@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Text, View, ScrollView,RefreshControl, TouchableOpacity, Image, FlatList, ActivityIndicator } from "react-native"
 import styles from './style'
-import { Score } from '../../components/HeaderCustom'
+import Score from '../../components/Score'
 import HeaderView from '../../components/Header'
 import { Icon } from 'react-native-elements'
 import firestore from '@react-native-firebase/firestore'
@@ -72,12 +72,15 @@ const LessonScreen = ({route}) => {
             await firestore().collection("DataStudy").get().then(querySnapshot => {
                 querySnapshot.forEach(doc => {
                     listPost.push({ idLesson: doc.id, ...doc.data(), studied:false })
+                    
                     /////
                     for (let data = 0; data < listPost.length; data++) {
                         if( Number(listPost[data].id) == 1){
                                    listPost[data].studied = true
                                }
-                        let amountUser = listPost[data].userStudied
+                        let amountUser = listPost[data].UserStudied
+
+                        
                         for (let user = 0; user < amountUser.length; user++) {
                             if (amountUser[user].uid == uid ) {
                                 listPost[data].studied = true
@@ -87,7 +90,8 @@ const LessonScreen = ({route}) => {
                    /////
                   
                    resultData = listPost.filter(item => item.idChapter == idChapter)
-                   sortLesson(resultData)
+                //    sortLesson(resultData)
+                
                 })
             })
             setDataLesson(resultData)
@@ -101,7 +105,7 @@ const LessonScreen = ({route}) => {
             getDataLesson()
         }, 1000)
     }
-
+  
 
     useEffect(()=>{
        

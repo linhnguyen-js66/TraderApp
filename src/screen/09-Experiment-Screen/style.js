@@ -40,5 +40,30 @@ export default StyleSheet.create({
         fontSize:fontSize[5],
         marginTop:spacing[2],
         marginLeft:spacing[3]
+    },
+    titleInput:{
+        
+        fontSize:fontSize[4],
+        color:'gray'
+    },
+    containInput:{
+        marginTop:spacing[5]
+    },
+    contain:{
+        marginHorizontal:spacing[5]
+    },
+    row:{
+        flexDirection:'row'
+    },
+    titleWeight:{
+        fontWeight:'bold',
+        fontSize:fontSize[4],
+        marginBottom:spacing[2]
+    },
+    revenue:{
+        fontSize:fontSize[4],
+        marginLeft:spacing[3],
+        color:'#3399ff',
+        marginBottom:spacing[4]
     }
 })

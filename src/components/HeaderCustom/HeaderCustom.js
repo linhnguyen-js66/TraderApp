@@ -6,7 +6,7 @@ import { palette } from "../../theme"
 import { useNavigation } from '@react-navigation/native'
 import { screen } from '../../navigation/screen'
 import firestore from '@react-native-firebase/firestore'
-
+import auth from '@react-native-firebase/auth'
 export const HeaderCustom = ({ uid }) => {
     const navigation = useNavigation()
     const [DataUser, setDataUser] = useState([])
@@ -58,20 +58,35 @@ export const HeaderCustom = ({ uid }) => {
     )
 }
 
-export const Score = () => {
-    return (
-        <View style={{ marginTop: 10 }}>
-            <View style={styles.containScore}>
-                <View>
-                    <Text style={styles.score}>6,677</Text>
-                </View>
-                <View style={styles.icon}>
-                    <Icon name="star" type="antdesign" size={15} color="tomato" />
-                </View>
-            </View>
-            <View style={{ position: 'absolute' }}>
-                <Image source={require('../../image/diamond.png')} style={styles.imageScore} />
-            </View>
-        </View>
-    )
-}
+// export const Score = () => {
+//     let uid = auth().currentUser.uid
+//     const [Score,setScore] = useState(0)
+//     const getScoreOfUser = async () => {
+//         let score
+//         try{
+//             let snapshot = await firestore().collection("UserInformation").where("uid", "==", uid).get()
+//             snapshot.docs.map(item => score = item.data().count)
+//             setScore(score)
+//         }catch(err){
+//             console.log(err)
+//         }
+//     }
+//     const getScore = () => {
+        
+//     }
+//     return (
+//         <View style={{ marginTop: 10 }}>
+//             <View style={styles.containScore}>
+//                 <View>
+//                     <Text style={styles.score}>6,677</Text>
+//                 </View>
+//                 <View style={styles.icon}>
+//                     <Icon name="star" type="antdesign" size={15} color="tomato" />
+//                 </View>
+//             </View>
+//             <View style={{ position: 'absolute' }}>
+//                 <Image source={require('../../image/diamond.png')} style={styles.imageScore} />
+//             </View>
+//         </View>
+//     )
+// }
